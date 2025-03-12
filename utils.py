@@ -1,14 +1,15 @@
 def confusion_matrix():
     pass
 
-def accuracy_score():
-    pass
-
+def accuracy_score(y,y_pred):
+    correct = 0
+    total = len(y)
+    for i in range(total):
+        if y == y_pred:
+            correct += 1
+    return correct/total * 100;
 def train_test_samples():
-    #Use the birds data in both your training and testing processes. 
-    # (Each class has 50 samples: train NN with 30 non-repeated samples randomly 
-    # selected, and test it with the remaining 20 samples)
-    pass;
+   pass
 
 def linear_activation_fn(x):
     return x;
