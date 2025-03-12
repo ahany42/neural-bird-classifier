@@ -1,24 +1,25 @@
 import utils
-def adaline():
-    adaline_preprocessing()
-    adaline_train()
-    adaline_predict()
-    adaline_test()
-    adaline_evaluate()
+def main(feature1, feature2, class1, class2, eta, epochs, mse_threshold, bias, bias_value):
+    print("Adaline")
+    preprocessing()
+    train()
+    predict()
+    test()
+    evaluate()
     
-def adaline_preprocessing():
+def preprocessing():
     pass
 
-def adaline_train():
+def train():
     pass
     
-def adaline_predict():
+def predict():
     pass
 
-def adaline_test():
+def test():
     pass
     
-def adaline_evaluate():
+def evaluate():
     utils.confusion_matrix
     utils.accuracy_score
 

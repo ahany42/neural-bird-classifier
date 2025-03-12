@@ -1,20 +1,21 @@
 import utils;
-def slp():
-    slp_preprocessing()
-    slp_train()
-    slp_predict()
-    slp_test()
-    slp_evaluate()
-def slp_preprocessing():
+def main(feature1, feature2, class1, class2, eta, epochs, bias, bias_value):
+    print("slp")
+    preprocessing()
+    train()
+    predict()
+    test()
+    evaluate()
+def preprocessing():
     pass
-def slp_train():
-    pass
-
-def slp_predict():
+def train():
     pass
 
-def slp_test():
+def predict():
     pass
 
-def slp_evaluate():
+def test():
+    pass
+
+def evaluate():
     pass
