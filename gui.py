@@ -53,20 +53,17 @@ def train_model():
     except ValueError:
         messagebox.showerror("Input Error", "Please enter valid numerical values for Learning Rate, Number of Epochs, and MSE Threshold.")
 
-# Main window
 root = tk.Tk()
 root.title("Perceptron & Adaline Trainer")
 root.geometry("400x600")
 root.configure(padx=50, pady=20)
 
-# Feature and Class selection
 feature_options = df.columns[:-1].tolist()
 class_options = df['bird category'].unique()
 
 frame = ttk.Frame(root)
 frame.pack(expand=True)
 
-# Feature Selection
 feature1_var = tk.StringVar()
 feature2_var = tk.StringVar()
 class1_var = tk.StringVar()
@@ -76,43 +73,42 @@ ttk.Label(frame, text="Select Features:").grid(row=0, column=0, columnspan=2, st
 ttk.OptionMenu(frame, feature1_var, *feature_options).grid(row=1, column=0, padx=5, pady=(0, 10))
 ttk.OptionMenu(frame, feature2_var, *feature_options).grid(row=1, column=1, padx=5, pady=(0, 10))
 
-# Class Selection
+
 ttk.Label(frame, text="Select Classes:").grid(row=2, column=0, columnspan=2, sticky='w', pady=(5, 0))
 ttk.OptionMenu(frame, class1_var, *class_options).grid(row=3, column=0, padx=5, pady=(0, 10))
 ttk.OptionMenu(frame, class2_var, *class_options).grid(row=3, column=1, padx=5, pady=(0, 10))
 
-# Learning rate
+
 ttk.Label(frame, text="Learning Rate (eta):").grid(row=4, column=0, sticky='w', pady=(5, 0))
 eta_entry = ttk.Entry(frame)
 eta_entry.grid(row=4, column=1, pady=(0, 10))
 
-# Epochs
+
 ttk.Label(frame, text="Number of Epochs:").grid(row=5, column=0, sticky='w', pady=(5, 0))
 epochs_entry = ttk.Entry(frame)
 epochs_entry.grid(row=5, column=1, pady=(0, 10))
 
-# MSE Threshold (Initially Hidden)
+
 mse_label = ttk.Label(frame, text="MSE Threshold:")
 mse_entry = ttk.Entry(frame)
 
-# Algorithm Selection
+
 algo_var = tk.StringVar(value="Perceptron")
 ttk.Label(frame, text="Select Algorithm:").grid(row=6, column=0, columnspan=2, sticky='w', pady=(5, 0))
 ttk.Radiobutton(frame, text="Perceptron", variable=algo_var, value="Perceptron", command=toggle_mse_entry).grid(row=8, column=0, sticky='w', pady=(0, 10))
 ttk.Radiobutton(frame, text="Adaline", variable=algo_var, value="Adaline", command=toggle_mse_entry).grid(row=8, column=1, sticky='w', pady=(0, 10))
 
-# Bias Checkbox (No Input Field)
+
 bias_var = tk.BooleanVar()
 ttk.Checkbutton(frame, text="Add Bias", variable=bias_var).grid(row=12, column=0, columnspan=2, sticky='w', pady=(5, 0))
 
-# Train Button
+
 ttk.Button(frame, text="Train", command=train_model).grid(row=18, column=0, columnspan=2, pady=(10, 10))
 
-# Result Label
+
 result_label = ttk.Label(frame, text="")
 result_label.grid(row=12, column=0, columnspan=2, pady=(10, 10))
 
-# Update dropdown backgrounds to white
 style = ttk.Style()
 style.configure("TMenubutton", background="white")
 
