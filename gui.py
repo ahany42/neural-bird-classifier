@@ -2,22 +2,24 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 import slp
 import adaline
+import pandas as pd
 
+df = pd.read_csv('birds_data.csv')
 def toggle_bias_entry():
     if bias_var.get():
-        bias_label.pack()
-        bias_entry.pack()
+        bias_label.grid(row=13, column=0, sticky='w', pady=(5, 0))
+        bias_entry.grid(row=13, column=1, pady=(5, 15))
     else:
-        bias_label.pack_forget()
-        bias_entry.pack_forget()
+        bias_label.grid_forget()
+        bias_entry.grid_forget()
 
 def toggle_mse_entry():
     if algo_var.get() == "Adaline":
-        mse_label.pack()
-        mse_entry.pack()
+        mse_label.grid(row=9, column=0, sticky='w', pady=(5, 0))
+        mse_entry.grid(row=9, column=1, pady=(5, 15))
     else:
-        mse_label.pack_forget()
-        mse_entry.pack_forget()
+        mse_label.grid_forget()
+        mse_entry.grid_forget()
 
 def train_model():
     try:
@@ -31,81 +33,96 @@ def train_model():
         bias = bias_var.get()
         bias_value = float(bias_entry.get()) if bias else "N/A"
         algorithm = algo_var.get()
-        
+
         if not feature1 or not feature2 or not class1 or not class2:
             messagebox.showerror("Input Error", "Please select both features and classes.")
             return
-        
+
+        if feature1 == feature2:
+            messagebox.showerror("Input Error", "Selected features must be different.")
+            return
+
+        if class1 == class2:
+            messagebox.showerror("Input Error", "Selected classes must be different.")
+            return
+
         if algorithm == "Perceptron":
             slp.main(feature1, feature2, class1, class2, eta, epochs, bias, bias_value)
         else:
             adaline.main(feature1, feature2, class1, class2, eta, epochs, mse_threshold, bias, bias_value)
-        
-        result_label.config(text=f"Training {algorithm} with:\nFeatures: {feature1}, {feature2}\nClasses: {class1}, {class2}\nLearning Rate: {eta}\nEpochs: {epochs}\nMSE Threshold: {mse_threshold}\nBias: {'Yes' if bias else 'No'}\nBias Value: {bias_value}")
+
+        result_label.config(text=f"Training {algorithm} with:\n"
+                                 f"Features: {feature1}, {feature2}\n"
+                                 f"Classes: {class1}, {class2}\n"
+                                 f"Learning Rate: {eta}\n"
+                                 f"Epochs: {epochs}\n"
+                                 f"MSE Threshold: {mse_threshold}\n"
+                                 f"Bias: {'Yes' if bias else 'No'}\n"
+                                 f"Bias Value: {bias_value}")
     except ValueError:
         messagebox.showerror("Input Error", "Please enter valid numerical values for Learning Rate, Number of Epochs, MSE Threshold, and Bias Value.")
 
 # Main window
 root = tk.Tk()
 root.title("Perceptron & Adaline Trainer")
-root.geometry("400x600")
+root.geometry("400x650")
+root.configure(padx=50, pady=20)
+# Feature and Class selection
+feature_options = df.columns[:-1].tolist()
+class_options = df['bird category'].unique()
 
-# Feature selection
-feature_options = ["Feature 1", "Feature 2", "Feature 3", "Feature 4"]
+frame = ttk.Frame(root)
+frame.pack(expand=True)
+
+# Feature Selection
 feature1_var = tk.StringVar()
 feature2_var = tk.StringVar()
-
-ttk.Label(root, text="Select Feature 1:").pack()
-ttk.OptionMenu(root, feature1_var, *feature_options).pack()
-
-ttk.Label(root, text="Select Feature 2:").pack()
-ttk.OptionMenu(root, feature2_var, *feature_options).pack()
-
-# Class selection
-class_options = ["Class 1", "Class 2", "Class 3"]
 class1_var = tk.StringVar()
 class2_var = tk.StringVar()
 
-ttk.Label(root, text="Select Class 1:").pack()
-ttk.OptionMenu(root, class1_var, *class_options).pack()
+ttk.Label(frame, text="Select Features:").grid(row=0, column=0, columnspan=2, sticky='w', pady=(5, 0))
+ttk.OptionMenu(frame, feature1_var, *feature_options).grid(row=1, column=0, padx=5, pady=(0, 10))
+ttk.OptionMenu(frame, feature2_var, *feature_options).grid(row=1, column=1, padx=5, pady=(0, 10))
 
-ttk.Label(root, text="Select Class 2:").pack()
-ttk.OptionMenu(root, class2_var, *class_options).pack()
+# Class Selection
+ttk.Label(frame, text="Select Classes:").grid(row=2, column=0, columnspan=2, sticky='w', pady=(5, 0))
+ttk.OptionMenu(frame, class1_var, *class_options).grid(row=3, column=0, padx=5, pady=(0, 10))
+ttk.OptionMenu(frame, class2_var, *class_options).grid(row=3, column=1, padx=5, pady=(0, 10))
 
 # Learning rate
-ttk.Label(root, text="Learning Rate (eta):").pack()
-eta_entry = ttk.Entry(root)
-eta_entry.pack()
+ttk.Label(frame, text="Learning Rate (eta):").grid(row=4, column=0, sticky='w', pady=(5, 0))
+eta_entry = ttk.Entry(frame)
+eta_entry.grid(row=4, column=1, pady=(0, 10))
 
 # Epochs
-ttk.Label(root, text="Number of Epochs:").pack()
-epochs_entry = ttk.Entry(root)
-epochs_entry.pack()
+ttk.Label(frame, text="Number of Epochs:").grid(row=5, column=0, sticky='w', pady=(5, 0))
+epochs_entry = ttk.Entry(frame)
+epochs_entry.grid(row=5, column=1, pady=(0, 10))
 
 # MSE Threshold (Initially Hidden)
-mse_label = ttk.Label(root, text="MSE Threshold:")
-mse_entry = ttk.Entry(root)
+mse_label = ttk.Label(frame, text="MSE Threshold:")
+mse_entry = ttk.Entry(frame)
 
 # Algorithm Selection
 algo_var = tk.StringVar(value="Perceptron")
-ttk.Label(root, text="Select Algorithm:").pack()
-ttk.Radiobutton(root, text="Perceptron", variable=algo_var, value="Perceptron", command=toggle_mse_entry).pack()
-ttk.Radiobutton(root, text="Adaline", variable=algo_var, value="Adaline", command=toggle_mse_entry).pack()
+ttk.Label(frame, text="Select Algorithm:").grid(row=6, column=0, columnspan=2, sticky='w', pady=(5, 0))
+ttk.Radiobutton(frame, text="Perceptron", variable=algo_var, value="Perceptron", command=toggle_mse_entry).grid(row=8, column=0, sticky='w', pady=(0, 10))
+ttk.Radiobutton(frame, text="Adaline", variable=algo_var, value="Adaline", command=toggle_mse_entry).grid(row=8, column=1, sticky='w', pady=(0, 10))
 
 # Bias Checkbox
 bias_var = tk.BooleanVar()
-ttk.Checkbutton(root, text="Add Bias", variable=bias_var, command=toggle_bias_entry).pack()
+ttk.Checkbutton(frame, text="Add Bias", variable=bias_var, command=toggle_bias_entry).grid(row=12, column=0, columnspan=2, sticky='w', pady=(5, 0))
 
 # Bias Input (Initially Hidden)
-bias_label = ttk.Label(root, text="Bias Value:")
-bias_entry = ttk.Entry(root)
+bias_label = ttk.Label(frame, text="Bias Value:")
+bias_entry = ttk.Entry(frame)
 
 # Train Button
-ttk.Button(root, text="Train", command=train_model).pack()
+ttk.Button(frame, text="Train", command=train_model).grid(row=18, column=0, columnspan=2, pady=(10, 10))
 
 # Result Label
-result_label = ttk.Label(root, text="")
-result_label.pack()
+result_label = ttk.Label(frame, text="")
+result_label.grid(row=12, column=0, columnspan=2, pady=(10, 10))
 
 # Update dropdown backgrounds to white
 style = ttk.Style()
