@@ -5,7 +5,12 @@ import adaline
 import pandas as pd
 
 df = pd.read_csv('birds_data.csv')
+def start_gui():
+    root.mainloop()
 
+if __name__ == "__main__":
+    start_gui()
+    
 def toggle_mse_entry():
     if algo_var.get() == "Adaline":
         mse_label.grid(row=9, column=0, sticky='w', pady=(5, 0))
