@@ -5,13 +5,6 @@ import adaline
 import pandas as pd
 
 df = pd.read_csv('birds_data.csv')
-def toggle_bias_entry():
-    if bias_var.get():
-        bias_label.grid(row=13, column=0, sticky='w', pady=(5, 0))
-        bias_entry.grid(row=13, column=1, pady=(5, 15))
-    else:
-        bias_label.grid_forget()
-        bias_entry.grid_forget()
 
 def toggle_mse_entry():
     if algo_var.get() == "Adaline":
@@ -31,7 +24,6 @@ def train_model():
         epochs = int(epochs_entry.get())
         mse_threshold = float(mse_entry.get()) if algo_var.get() == "Adaline" else "N/A"
         bias = bias_var.get()
-        bias_value = float(bias_entry.get()) if bias else "N/A"
         algorithm = algo_var.get()
 
         if not feature1 or not feature2 or not class1 or not class2:
@@ -47,9 +39,9 @@ def train_model():
             return
 
         if algorithm == "Perceptron":
-            slp.main(feature1, feature2, class1, class2, eta, epochs, bias, bias_value)
+            slp.main(feature1, feature2, class1, class2, eta, epochs, bias)
         else:
-            adaline.main(feature1, feature2, class1, class2, eta, epochs, mse_threshold, bias, bias_value)
+            adaline.main(feature1, feature2, class1, class2, eta, epochs, mse_threshold, bias)
 
         result_label.config(text=f"Training {algorithm} with:\n"
                                  f"Features: {feature1}, {feature2}\n"
@@ -57,16 +49,16 @@ def train_model():
                                  f"Learning Rate: {eta}\n"
                                  f"Epochs: {epochs}\n"
                                  f"MSE Threshold: {mse_threshold}\n"
-                                 f"Bias: {'Yes' if bias else 'No'}\n"
-                                 f"Bias Value: {bias_value}")
+                                 f"Bias: {'Yes' if bias else 'No'}")
     except ValueError:
-        messagebox.showerror("Input Error", "Please enter valid numerical values for Learning Rate, Number of Epochs, MSE Threshold, and Bias Value.")
+        messagebox.showerror("Input Error", "Please enter valid numerical values for Learning Rate, Number of Epochs, and MSE Threshold.")
 
 # Main window
 root = tk.Tk()
 root.title("Perceptron & Adaline Trainer")
-root.geometry("400x650")
+root.geometry("400x600")
 root.configure(padx=50, pady=20)
+
 # Feature and Class selection
 feature_options = df.columns[:-1].tolist()
 class_options = df['bird category'].unique()
@@ -109,13 +101,9 @@ ttk.Label(frame, text="Select Algorithm:").grid(row=6, column=0, columnspan=2, s
 ttk.Radiobutton(frame, text="Perceptron", variable=algo_var, value="Perceptron", command=toggle_mse_entry).grid(row=8, column=0, sticky='w', pady=(0, 10))
 ttk.Radiobutton(frame, text="Adaline", variable=algo_var, value="Adaline", command=toggle_mse_entry).grid(row=8, column=1, sticky='w', pady=(0, 10))
 
-# Bias Checkbox
+# Bias Checkbox (No Input Field)
 bias_var = tk.BooleanVar()
-ttk.Checkbutton(frame, text="Add Bias", variable=bias_var, command=toggle_bias_entry).grid(row=12, column=0, columnspan=2, sticky='w', pady=(5, 0))
-
-# Bias Input (Initially Hidden)
-bias_label = ttk.Label(frame, text="Bias Value:")
-bias_entry = ttk.Entry(frame)
+ttk.Checkbutton(frame, text="Add Bias", variable=bias_var).grid(row=12, column=0, columnspan=2, sticky='w', pady=(5, 0))
 
 # Train Button
 ttk.Button(frame, text="Train", command=train_model).grid(row=18, column=0, columnspan=2, pady=(10, 10))

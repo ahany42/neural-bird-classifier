@@ -1,5 +1,5 @@
 import utils
-def main(feature1, feature2, class1, class2, eta, epochs, mse_threshold, bias, bias_value):
+def main(feature1, feature2, class1, class2, eta, epochs, mse_threshold, bias):
     print("Adaline")
     preprocessing()
     train()

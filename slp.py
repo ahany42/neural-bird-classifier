@@ -1,5 +1,5 @@
 import utils;
-def main(feature1, feature2, class1, class2, eta, epochs, bias, bias_value):
+def main(feature1, feature2, class1, class2, eta, epochs, bias):
     print("slp")
     preprocessing()
     train()
