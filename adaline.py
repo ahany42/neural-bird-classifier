@@ -35,6 +35,3 @@ def test():
 def evaluate():
     utils.confusion_matrix
     utils.accuracy_score
-
-def mse_early_stopping():
-    pass
