@@ -1,7 +1,8 @@
 import utils;
 def main(feature1, feature2, class1, class2, eta, epochs, bias):
     print("slp")
-    utils.preprocessing(feature1, feature2, class1, class2)
+    print(feature1,feature2,class1,class2,eta,epochs,bias,sep="  ")
+    X_train, y_train, X_test, y_test = utils.preprocessing(feature1, feature2, class1, class2)
     train()
     y,y_pred = predict()
     test(y,y_pred)

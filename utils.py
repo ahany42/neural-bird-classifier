@@ -74,5 +74,9 @@ def input_output_mapping(df,class_one,class_two):
     return df
 
 def preprocessing(feature1, feature2, class1, class2):
-      X_train, y_train, X_test, y_test =[]
-      yield X_train, y_train, X_test, y_test
+      X_train = [] 
+      y_train = []
+      X_test = []
+      y_test = []
+      print("PreProcessing ",feature1,feature2,class1,class2)
+      return X_train, y_train, X_test, y_test

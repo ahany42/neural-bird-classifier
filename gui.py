@@ -25,25 +25,37 @@ def train_model():
         feature2 = feature2_var.get()
         class1 = class1_var.get()
         class2 = class2_var.get()
-        eta = float(eta_entry.get())
-        epochs = int(epochs_entry.get())
-        mse_threshold = float(mse_entry.get()) if algo_var.get() == "Adaline" else "N/A"
+        eta_text = eta_entry.get().strip()
+        epochs_text = epochs_entry.get().strip()
+        mse_text = mse_entry.get().strip() if algo_var.get() == "Adaline" else "N/A"
         bias = bias_var.get()
         algorithm = algo_var.get()
 
-        if not feature1 or not feature2 or not class1 or not class2:
-            messagebox.showerror("Input Error", "Please select both features and classes.")
+        # Validate feature and class selection
+        if not feature1 or not feature2:
+            messagebox.showerror("Input Error", "Please select both features.")
             return
-
-        elif feature1 == feature2:
+        if feature1 == feature2:
             messagebox.showerror("Input Error", "Selected features must be different.")
             return
-
-        elif class1 == class2:
+        if not class1 or not class2:
+            messagebox.showerror("Input Error", "Please select both classes.")
+            return
+        if class1 == class2:
             messagebox.showerror("Input Error", "Selected classes must be different.")
             return
-
-        elif algorithm == "Perceptron":
+        
+        # Validate numerical inputs
+        try:
+            eta = float(eta_text)
+            epochs = int(epochs_text)
+            mse_threshold = float(mse_text) if algo_var.get() == "Adaline" else "N/A"
+        except ValueError:
+            messagebox.showerror("Input Error", "Ensure Learning Rate, Epochs, and MSE Threshold (if applicable) are valid numbers.")
+            return
+        
+        # Call the appropriate model function
+        if algorithm == "Perceptron":
             slp.main(feature1, feature2, class1, class2, eta, epochs, bias)
         else:
             adaline.main(feature1, feature2, class1, class2, eta, epochs, mse_threshold, bias)
@@ -55,8 +67,9 @@ def train_model():
                                  f"Epochs: {epochs}\n"
                                  f"MSE Threshold: {mse_threshold}\n"
                                  f"Bias: {'Yes' if bias else 'No'}")
-    except ValueError:
-        messagebox.showerror("Input Error", "Please enter valid numerical values for Learning Rate, Number of Epochs, and MSE Threshold.")
+
+    except Exception as e:
+        messagebox.showerror("Unexpected Error", str(e))
 
 root = tk.Tk()
 root.title("Perceptron & Adaline Trainer")
