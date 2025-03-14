@@ -1,5 +1,6 @@
 import utils
 import numpy as np
+import pandas as pd
 def main(feature1, feature2, class1, class2, eta, epochs, mse_threshold, bias):
     print("Adaline")
     print(feature1,feature2,class1,class2,eta,epochs,mse_threshold,bias,sep="  ")
@@ -37,3 +38,16 @@ def test():
 def evaluate():
     utils.confusion_matrix
     utils.accuracy_score
+    
+#testing train function
+def unit_test_train():  
+    X = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])  
+    y = np.array([0, 0, 0, 1]) 
+    eta = 0.1 
+    epochs = 1000  
+    mse_threshold = 0.01  
+    bias = False
+    weights = train(X, y, eta, epochs, mse_threshold, bias)
+    print("Final Weights:", weights)
+
+# unit_test_train()

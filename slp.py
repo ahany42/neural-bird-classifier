@@ -4,15 +4,15 @@ def main(feature1, feature2, class1, class2, eta, epochs, bias):
     print(feature1,feature2,class1,class2,eta,epochs,bias,sep="  ")
     X_train, y_train, X_test, y_test = utils.preprocessing(feature1, feature2, class1, class2)
     train()
-    y,y_pred = predict()
-    test(y,y_pred)
+    y_pred = predict()
+    test(y_test,y_pred)
     evaluate()
 def train():
     pass
 
 def predict():
-    y,y_pred =[]
-    return y,y_pred;
+    y_pred =[]
+    return y_pred;
 
 def test(y,y_pred):
     error = y - y_pred;
