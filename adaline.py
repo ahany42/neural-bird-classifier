@@ -1,14 +1,30 @@
 import utils
 def main(feature1, feature2, class1, class2, eta, epochs, mse_threshold, bias):
     print("Adaline")
-    utils.preprocessing()
-    train()
+    X_train, y_train, X_test, y_test = utils.preprocessing(feature1, feature2, class1, class2)
+    weights = train(X_train, y_train, eta, epochs, mse_threshold, bias)
     predict()
     test()
     evaluate()
 
-def train():
-    pass
+def train(X, y, eta, epochs, mse_threshold, bias):
+    np.random.seed(42)
+    weights = np.random.rand(X.shape[1] + int(bias))  
+    
+    for epoch in range(epochs):
+        output = np.dot(X, weights[1:]) + (weights[0] if bias else 0)  
+        errors = y - output
+        mse = np.mean(errors**2)
+        
+        if mse < mse_threshold:
+            break
+        
+        weights[1:] += eta * np.dot(X.T, errors)  
+        
+        if bias:
+            weights[0] += eta * errors.sum() 
+    
+    return weights
     
 def predict():
     pass
