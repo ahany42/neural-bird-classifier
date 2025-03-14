@@ -11,6 +11,11 @@ def main(feature1, feature2, class1, class2, eta, epochs, mse_threshold, bias):
     evaluate()
 
 def train(X, y, eta, epochs, mse_threshold, bias):
+    X = np.array(X, dtype=np.float64)
+    y = np.array(y, dtype=np.float64)
+    # If X is 1D, reshape it (GUI Handling)
+    if X.ndim == 1:  
+        X = X.reshape(-1, 1)
     np.random.seed(42)
     weights = np.random.rand(X.shape[1] + int(bias))  
     
@@ -49,8 +54,8 @@ def unit_test_train():
     eta = 0.1 
     epochs = 1000  
     mse_threshold = 0.01  
-    bias = False
+    bias = True
     weights = train(X, y, eta, epochs, mse_threshold, bias)
     print("Final Weights:", weights)
 
-#unit_test_train()
+unit_test_train()

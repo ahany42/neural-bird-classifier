@@ -60,7 +60,7 @@ def train_model():
             return
         
         # Call the appropriate model function
-        if algorithm == "Perceptron":
+        if algorithm == "slp":
             slp.main(feature1, feature2, class1, class2, eta, epochs, bias)
         else:
             adaline.main(feature1, feature2, class1, class2, eta, epochs, mse_threshold, bias)
@@ -78,7 +78,7 @@ def train_model():
 
 # Create GUI window
 root = tk.Tk()
-root.title("Perceptron & Adaline Trainer")
+root.title("slp & Adaline Trainer")
 root.geometry("400x600")
 root.configure(padx=50, pady=20)
 
@@ -126,9 +126,9 @@ mse_label = ttk.Label(frame, text="MSE Threshold:")
 mse_entry = ttk.Entry(frame)
 
 # Algorithm selection
-algo_var = tk.StringVar(value="Perceptron")
+algo_var = tk.StringVar(value="slp")
 ttk.Label(frame, text="Select Algorithm:").grid(row=6, column=0, columnspan=2, sticky='w', pady=(5, 0))
-ttk.Radiobutton(frame, text="Perceptron", variable=algo_var, value="Perceptron", command=toggle_mse_entry).grid(row=8, column=0, sticky='w', pady=(0, 10))
+ttk.Radiobutton(frame, text="slp", variable=algo_var, value="slp", command=toggle_mse_entry).grid(row=8, column=0, sticky='w', pady=(0, 10))
 ttk.Radiobutton(frame, text="Adaline", variable=algo_var, value="Adaline", command=toggle_mse_entry).grid(row=8, column=1, sticky='w', pady=(0, 10))
 
 # Bias checkbox

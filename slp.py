@@ -15,7 +15,8 @@ def predict():
     return y_pred;
 
 def test(y,y_pred):
-    error = y - y_pred;
+    for row in zip(y,y_pred):
+        error = y - y_pred
 
 #Call Accuracy And Confusion Matrix from utils
 def evaluate():

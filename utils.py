@@ -74,6 +74,7 @@ def input_output_mapping(df,class_one,class_two):
     return df
 
 def preprocessing(feature1, feature2, class1, class2):
+    #call train test split
       X_train = [] 
       y_train = []
       X_test = []
