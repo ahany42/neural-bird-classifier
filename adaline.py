@@ -15,14 +15,17 @@ def train(X, y, eta, epochs, mse_threshold, bias):
     weights = np.random.rand(X.shape[1] + int(bias))  
     
     for epoch in range(epochs):
-        output = np.dot(X, weights[1:]) + (weights[0] if bias else 0)  
+        output = np.dot(X, weights) if not bias else np.dot(X, weights[1:]) + weights[0]  
         errors = y - output
         mse = np.mean(errors**2)
         
         if mse < mse_threshold:
             break
         
-        weights[1:] += eta * np.dot(X.T, errors)  
+        if not bias:
+            weights += eta * np.dot(X.T, errors) 
+        else:
+            weights[1:] += eta * np.dot(X.T, errors)  
         
         if bias:
             weights[0] += eta * errors.sum() 
@@ -50,4 +53,4 @@ def unit_test_train():
     weights = train(X, y, eta, epochs, mse_threshold, bias)
     print("Final Weights:", weights)
 
-# unit_test_train()
+#unit_test_train()
