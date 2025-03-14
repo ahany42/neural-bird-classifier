@@ -14,6 +14,10 @@ def confusion_matrix(class_one,class_two,y,y_pred):
             TN +=1
         elif (t == class_two and prediction == class_one):
             FP +=1 
+    print("TP ",TP)
+    print("FP ",FP)
+    print("FN ",FN)
+    print("TN ",TN)
 
 def accuracy_score(y,y_pred):
     correct = 0
