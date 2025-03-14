@@ -35,15 +35,15 @@ def train_model():
             messagebox.showerror("Input Error", "Please select both features and classes.")
             return
 
-        if feature1 == feature2:
+        elif feature1 == feature2:
             messagebox.showerror("Input Error", "Selected features must be different.")
             return
 
-        if class1 == class2:
+        elif class1 == class2:
             messagebox.showerror("Input Error", "Selected classes must be different.")
             return
 
-        if algorithm == "Perceptron":
+        elif algorithm == "Perceptron":
             slp.main(feature1, feature2, class1, class2, eta, epochs, bias)
         else:
             adaline.main(feature1, feature2, class1, class2, eta, epochs, mse_threshold, bias)
