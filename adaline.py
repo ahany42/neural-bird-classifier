@@ -19,9 +19,10 @@ def train(X, y, eta, epochs, mse_threshold, bias):
     np.random.seed(42)
     weights = np.random.rand(X.shape[1] + int(bias))  
     
-    for epoch in range(epochs):
-        output = np.dot(X, weights) if not bias else np.dot(X, weights[1:]) + weights[0]  
-        errors = y - output
+    for e in range(epochs):
+        net = np.dot(X, weights) if not bias else np.dot(X, weights[1:]) + weights[0]
+        net = utils.linear_activation_fn(net)  
+        errors = y - net
         mse = np.mean(errors**2)
         
         if mse < mse_threshold:
@@ -46,16 +47,3 @@ def test():
 def evaluate():
     utils.confusion_matrix
     utils.accuracy_score
-    
-#testing train function
-def unit_test_train():  
-    X = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])  
-    y = np.array([0, 0, 0, 1]) 
-    eta = 0.1 
-    epochs = 1000  
-    mse_threshold = 0.01  
-    bias = True
-    weights = train(X, y, eta, epochs, mse_threshold, bias)
-    print("Final Weights:", weights)
-
-unit_test_train()
