@@ -32,6 +32,9 @@ def predict(X_test, weights, bias):
     X_test = np.array(X_test, dtype=np.float64)
     if bias:
         X_test = np.c_[np.ones(X_test.shape[0]), X_test]
-    y_pred = [utils.signum_activation_fn(np.dot(X_test[i], weights)) for i in range(len(X_test))]
+        y_pred=[]
+    for i in range(len(X_test)):
+        net = np.dot(X_test[i], weights)
+        y_pred.append(utils.signum_activation_fn(net))
     return y_pred
 
