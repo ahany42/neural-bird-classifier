@@ -1,6 +1,5 @@
 import utils
 import numpy as np
-from sklearn.linear_model import Perceptron
 def main(feature1, feature2, class1, class2, eta, epochs, bias):
     print("slp")
     print(feature1, feature2, class1, class2, eta, epochs, bias, sep="  ")
@@ -14,6 +13,10 @@ def train(X_train, y_train, eta, epochs, bias):
     
     X_train = np.array(X_train, dtype=np.float64)
     y_train = np.array(y_train, dtype=np.float64)
+    y_pred = []
+    #GUI data type handling
+    if X_train.ndim == 1:  
+        X_train = X_train.reshape(-1, 1)
     if bias:
         X_train = np.c_[np.ones(X_train.shape[0]), X_train]
     weights = np.random.rand(X_train.shape[1])  
@@ -30,9 +33,9 @@ def train(X_train, y_train, eta, epochs, bias):
 
 def predict(X_test, weights, bias):
     X_test = np.array(X_test, dtype=np.float64)
+    y_pred=[]
     if bias:
         X_test = np.c_[np.ones(X_test.shape[0]), X_test]
-        y_pred=[]
     for i in range(len(X_test)):
         net = np.dot(X_test[i], weights)
         y_pred.append(utils.signum_activation_fn(net))
