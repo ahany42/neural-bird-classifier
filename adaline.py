@@ -1,11 +1,15 @@
 import utils
 import numpy as np
 import pandas as pd
+
 def main(feature1, feature2, class1, class2, eta, epochs, mse_threshold, bias):
     print("Adaline")
-    print(feature1,feature2,class1,class2,eta,epochs,mse_threshold,bias,sep="  ")
+    print(feature1, feature2, class1, class2, eta, epochs, mse_threshold, bias, sep="  ")
+    
     X_train, y_train, X_test, y_test = utils.preprocessing(feature1, feature2, class1, class2)
+    
     weights = train(X_train, y_train, eta, epochs, mse_threshold, bias)
+    
     predict()
     test()
     evaluate()
@@ -16,28 +20,35 @@ def train(X, y, eta, epochs, mse_threshold, bias):
     # If X is 1D, reshape it (GUI Handling)
     if X.ndim == 1:  
         X = X.reshape(-1, 1)
+    
     np.random.seed(42)
+    
     weights = np.random.rand(X.shape[1] + int(bias))  
     
     for e in range(epochs):
-        net = np.dot(X, weights) if not bias else np.dot(X, weights[1:]) + weights[0]
-        net = utils.linear_activation_fn(net)  
-        errors = y - net
-        mse = np.mean(errors**2)
+        indices = np.random.permutation(len(X))
+        X, y = X[indices], y[indices]
+        
+        for i in range(len(X)):
+            x_i, y_i = X[i], y[i]
+            
+            net = np.dot(x_i, weights[1:]) + weights[0] if bias else np.dot(x_i, weights)
+            net = utils.linear_activation_fn(net)
+            error = y_i - net
+            
+            if not bias:
+                weights += eta * error * x_i
+            else:
+                weights[1:] += eta * error * x_i
+                weights[0] += eta * error
+        
+        mse = np.mean((y - np.dot(X, weights[1:]) - weights[0])**2) if bias else np.mean((y - np.dot(X, weights))**2)
         
         if mse < mse_threshold:
-            break
-        
-        if not bias:
-            weights += eta * np.dot(X.T, errors) 
-        else:
-            weights[1:] += eta * np.dot(X.T, errors)  
-        
-        if bias:
-            weights[0] += eta * errors.sum() 
+            break  
     
     return weights
-    
+
 def predict():
     pass
 
