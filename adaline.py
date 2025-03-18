@@ -1,6 +1,7 @@
 import utils
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 
 def main(feature1, feature2, class1, class2, eta, epochs, mse_threshold, bias):
     print("Adaline")
@@ -10,7 +11,7 @@ def main(feature1, feature2, class1, class2, eta, epochs, mse_threshold, bias):
     
     weights = train(X_train, y_train, eta, epochs, mse_threshold, bias)
     
-    predict()
+    predict(X_train, y_train, weights, bias)
     test()
     evaluate()
 
@@ -49,8 +50,23 @@ def train(X, y, eta, epochs, mse_threshold, bias):
     
     return weights
 
-def predict():
-    pass
+def predict(X, y, weights, bias):
+    plt.figure()
+    plt.scatter(X[:, 0], X[:, 1], c=y, cmap='bwr', edgecolors='k')
+    
+    x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
+    x_vals = np.linspace(x_min, x_max, 100)
+    
+    if bias:
+        y_vals = -(weights[1] * x_vals + weights[0]) / weights[2]
+    else:
+        y_vals = -(weights[0] * x_vals) / weights[1]
+    
+    plt.plot(x_vals, y_vals, 'k-', linewidth=2)
+    plt.xlabel("Feature 1")
+    plt.ylabel("Feature 2")
+    plt.title("Decision Boundary")
+    plt.show()
 
 def test():
     pass
