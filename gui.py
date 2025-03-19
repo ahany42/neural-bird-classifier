@@ -61,18 +61,20 @@ def train_model():
         
         # Call the appropriate model function
         if algorithm == "slp":
-            slp.main(feature1, feature2, class1, class2, eta, epochs, bias)
+            accuracy ,TP,FP,FN,TN = slp.main(feature1, feature2, class1, class2, eta, epochs, bias)
         else:
             adaline.main(feature1, feature2, class1, class2, eta, epochs, mse_threshold, bias)
 
-        result_label.config(text=f"Training {algorithm} with:\n"
-                                 f"Features: {feature1}, {feature2}\n"
-                                 f"Classes: {class1}, {class2}\n"
-                                 f"Learning Rate: {eta}\n"
-                                 f"Epochs: {epochs}\n"
-                                 f"MSE Threshold: {mse_threshold}\n"
-                                 f"Bias: {'Yes' if bias else 'No'}")
+        result_label.config(text=f"""
+        Confusion Matrix:
+        Predicted |  {class1}  |  {class2}  |
+        ----------------------
+        Actual {class1} | {TP:3} | {FN:3} |
+        Actual {class2} | {FP:3} | {TN:3} |
 
+        Accuracy: {accuracy} %
+        """)
+        result_label.grid(row=10, column=0, columnspan=2, pady=10)  
     except Exception as e:
         messagebox.showerror("Unexpected Error", str(e))
 
