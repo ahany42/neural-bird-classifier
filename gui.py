@@ -63,7 +63,7 @@ def train_model():
         if algorithm == "slp":
             accuracy ,TP,FP,FN,TN = slp.main(feature1, feature2, class1, class2, eta, epochs, bias)
         else:
-            adaline.main(feature1, feature2, class1, class2, eta, epochs, mse_threshold, bias)
+            accuracy ,TP,FP,FN,TN = adaline.main(feature1, feature2, class1, class2, eta, epochs, mse_threshold, bias)
 
         result_label.config(text=f"""
         Confusion Matrix:

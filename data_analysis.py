@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 file_path = "D:/birds.csv"
 df = pd.read_csv(file_path)
 
-#features that r analyzed
 features = ['beak_length', 'beak_depth', 'body_mass', 'fin_length']
 
 def display_menu():
@@ -33,7 +32,7 @@ while True:
         print(df[features].corr())
 
     elif choice == "3":
-        for feature in features: #loop for each featre
+        for feature in features: 
             plt.hist(df[feature], bins=20, alpha=0.7, label=feature)
             plt.xlabel(feature)
             plt.ylabel("Frequency")

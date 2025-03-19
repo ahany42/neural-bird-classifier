@@ -11,9 +11,12 @@ def main(feature1, feature2, class1, class2, eta, epochs, mse_threshold, bias):
     
     weights = train(X_train, y_train, eta, epochs, mse_threshold, bias)
     
-    predict(X_train, y_train, weights, bias)
-    test(X_test, y_test, weights, bias)
-    evaluate()
+    y_pred = predict(X_train, y_train, weights, bias)
+    # y_pred = test(X_test, y_test, weights, bias)
+    print("y_test:", y_test)
+    print("y_pred:", y_pred)
+    accuracy ,TP,FP,FN,TN = utils.evaluate(y_test, y_pred)
+    return accuracy ,TP,FP,FN,TN
 
 def train(X, y, eta, epochs, mse_threshold, bias):
     X = np.array(X, dtype=np.float64)
@@ -41,9 +44,7 @@ def train(X, y, eta, epochs, mse_threshold, bias):
             else:
                 weights[1:] += eta * error * x_i
                 weights[0] += eta * error
-        
-        mse = np.mean((y - np.dot(X, weights[1:]) - weights[0])**2) if bias else np.mean((y - np.dot(X, weights))**2)
-        
+                mse = np.mean((y - np.dot(X, weights[1:]) - weights[0])**2) if bias else np.mean((y - np.dot(X, weights))**2)        
         if mse < mse_threshold:
             break  
     
@@ -72,10 +73,30 @@ def predict(X, y, weights, bias):
     
     return y_pred
 
-def test(X_test, y_test, weights, bias):
-    y_pred = predict(X_test, y_test, weights, bias)
-    print("Test Predictions:", y_pred)
-    return y_pred
-def evaluate():
-    utils.confusion_matrix
-    utils.accuracy_score
+# def test(X_test, y_test, weights, bias):
+#     y_pred = predict(X_test, y_test, weights, bias)
+#     print("Test Predictions:", y_pred)
+#     return y_pred
+accuracy, TP, FP, FN, TN = main(
+    feature1="beak_length",
+    feature2="gender",
+    class1="A",
+    class2="B",
+    eta=0.01,
+    epochs=1000,
+    mse_threshold=4,  # Adjust as needed
+    bias=True  # This is a boolean
+)
+accuracy, TP, FP, FN, TN = main(
+    feature1="beak_length",
+    feature2="gender",
+    class1="A",
+    class2="B",
+    eta=0.01,
+    epochs=1000,
+    mse_threshold=4,  # Adjust as needed
+    bias=False 
+)
+
+print(f"Accuracy: {accuracy}%")
+print(f"TP: {TP}, FP: {FP}, FN: {FN}, TN: {TN}")
