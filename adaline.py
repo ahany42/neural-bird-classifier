@@ -12,13 +12,12 @@ def main(feature1, feature2, class1, class2, eta, epochs, mse_threshold, bias):
     weights = train(X_train, y_train, eta, epochs, mse_threshold, bias)
     
     predict(X_train, y_train, weights, bias)
-    test()
+    test(X_test, y_test, weights, bias)
     evaluate()
 
 def train(X, y, eta, epochs, mse_threshold, bias):
     X = np.array(X, dtype=np.float64)
     y = np.array(y, dtype=np.float64)
-    # If X is 1D, reshape it (GUI Handling)
     if X.ndim == 1:  
         X = X.reshape(-1, 1)
     
@@ -51,6 +50,9 @@ def train(X, y, eta, epochs, mse_threshold, bias):
     return weights
 
 def predict(X, y, weights, bias):
+    net = np.dot(X, weights[1:]) + weights[0] if bias else np.dot(X, weights)
+    y_pred = np.where(net >= 0, 1, -1)
+    
     plt.figure()
     plt.scatter(X[:, 0], X[:, 1], c=y, cmap='bwr', edgecolors='k')
     
@@ -67,10 +69,13 @@ def predict(X, y, weights, bias):
     plt.ylabel("Feature 2")
     plt.title("Decision Boundary")
     plt.show()
-
-def test():
-    pass
     
+    return y_pred
+
+def test(X_test, y_test, weights, bias):
+    y_pred = predict(X_test, y_test, weights, bias)
+    print("Test Predictions:", y_pred)
+    return y_pred
 def evaluate():
     utils.confusion_matrix
     utils.accuracy_score
