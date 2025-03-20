@@ -110,10 +110,6 @@ def create_gui():
     scatter_plots_button = tk.Button(root, text="Scatter Plots", command=scatter_plots)
     scatter_plots_button.pack(pady=10)
 
-    # Exit Button
-    exit_button = tk.Button(root, text="Exit", command=root.quit)
-    exit_button.pack(pady=10)
-
     root.mainloop()
 
 #

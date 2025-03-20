@@ -3,7 +3,7 @@ from tkinter import ttk, messagebox
 import slp
 import adaline
 import pandas as pd
-
+import data_analysis
 # Load dataset
 df = pd.read_csv('birds_data.csv')
 
@@ -140,7 +140,7 @@ ttk.Checkbutton(frame, text="Add Bias", variable=bias_var).grid(row=12, column=0
 
 # Train button
 ttk.Button(frame, text="Train", command=train_model).grid(row=18, column=0, columnspan=2, pady=(10, 10))
-
+ttk.Button(frame, text="Data Analysis", command=data_analysis.create_gui).grid(row=18, column=0, columnspan=2, pady=(100, 10))
 # Result label
 result_label = ttk.Label(frame, text="")
 result_label.grid(row=12, column=0, columnspan=2, pady=(10, 10))
