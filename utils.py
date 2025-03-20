@@ -22,7 +22,8 @@ def signum_activation_fn(x):
 
 def preprocessing(feature1, feature2, class1, class2):
     df = pd.read_csv('birds_data.csv')
-    
+    df["gender"].fillna(df["gender"].mode()[0], inplace=True)
+    df["gender"] = df["gender"].astype("category").cat.codes  
     if feature1 not in df.columns or feature2 not in df.columns or "bird category" not in df.columns:
         raise KeyError(f"One or more columns ({feature1}, {feature2}, 'bird category') are missing in the dataset")
     
