@@ -4,7 +4,6 @@ import slp
 import adaline
 import pandas as pd
 import data_analysis
-# Load dataset
 df = pd.read_csv('birds_data.csv')
 
 DEFAULT_FEATURE = "Select Feature"
