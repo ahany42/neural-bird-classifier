@@ -26,6 +26,7 @@ def toggle_mse_entry():
 # Function to train the model
 def train_model():
     try:
+        result_label.config(text="")
         feature1 = feature1_var.get()
         feature2 = feature2_var.get()
         class1 = class1_var.get()
