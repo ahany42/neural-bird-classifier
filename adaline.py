@@ -86,16 +86,16 @@ def plot_decision_boundary(X, y, weights, bias):
     #return y_pred
 
 
-accuracy, TP, FP, FN, TN = main(
-    feature1="beak_length",
-    feature2="gender",
-    class1="A",
-    class2="B",
-    eta=0.01,
-    epochs=1000,
-    mse_threshold=4,  # Adjust as needed
-    bias=False  # This is a boolean
-)
+# accuracy, TP, FP, FN, TN = main(
+#     feature1="beak_length",
+#     feature2="gender",
+#     class1="A",
+#     class2="B",
+#     eta=0.01,
+#     epochs=1000,
+#     mse_threshold=4,  # Adjust as needed
+#     bias=False  # This is a boolean
+# )
 # accuracy, TP, FP, FN, TN = main(
 #     feature1="beak_length",
 #     feature2="gender",
@@ -107,5 +107,5 @@ accuracy, TP, FP, FN, TN = main(
 #     bias=False 
 # )
 
-print(f"Accuracy: {accuracy}%")
-print(f"TP: {TP}, FP: {FP}, FN: {FN}, TN: {TN}")
+# print(f"Accuracy: {accuracy}%")
+# print(f"TP: {TP}, FP: {FP}, FN: {FN}, TN: {TN}")
