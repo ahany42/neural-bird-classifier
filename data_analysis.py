@@ -3,10 +3,50 @@ from tkinter import messagebox
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
 
 df = pd.read_csv('birds_data.csv')
 
 numerical_features = ['beak_length', 'beak_depth', 'body_mass', 'fin_length']
+
+# Function to apply PCA and plot results
+def apply_pca():
+    # Impute missing values with the mean of the column (instead of dropping rows)
+    X = df[numerical_features].fillna(df[numerical_features].mean())  # Impute NaN with column mean
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
+
+    # Apply PCA
+    pca = PCA(n_components=2)
+    pca_result = pca.fit_transform(X_scaled)
+
+    # Create a DataFrame for the PCA components
+    pca_df = pd.DataFrame(data=pca_result, columns=['PC1', 'PC2'])
+
+    # Plotting the PCA results
+    plt.figure(figsize=(8, 6))
+    plt.scatter(pca_df['PC1'], pca_df['PC2'], c='blue', alpha=0.7)
+    plt.title("PCA of Numerical Features")
+    plt.xlabel("Principal Component 1")
+    plt.ylabel("Principal Component 2")
+
+    # Display feature contributions (loadings) to the principal components
+    feature_loading = pd.DataFrame(pca.components_, columns=numerical_features, index=["PC1", "PC2"])
+
+    # Plotting the feature loadings
+    plt.figure(figsize=(8, 6))
+    plt.barh(numerical_features, feature_loading.loc["PC1"], label="PC1", alpha=0.7)
+    plt.barh(numerical_features, feature_loading.loc["PC2"], label="PC2", alpha=0.7)
+    plt.xlabel("Feature Importance")
+    plt.title("Feature Contribution to Principal Components")
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+
+    # Show the explained variance ratio for each component
+    print("Explained variance ratio by each principal component:")
+    print(pca.explained_variance_ratio_)
 
 def gender_distribution():
     if 'gender' in df.columns:
@@ -95,6 +135,9 @@ def create_gui():
     scatter_plots_button = tk.Button(root, text="Scatter Plots", command=scatter_plots)
     scatter_plots_button.pack(pady=10)
 
+    pca_button = tk.Button(root, text="Apply PCA", command=apply_pca)
+    pca_button.pack(pady=10)
+
     root.mainloop()
 
-#
+
