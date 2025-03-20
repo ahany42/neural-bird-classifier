@@ -11,11 +11,11 @@ def main(feature1, feature2, class1, class2, eta, epochs, mse_threshold, bias):
     
     weights = train(X_train, y_train, eta, epochs, mse_threshold, bias)
     
-    y_pred = predict(X_train, y_train, weights, bias)
+    y_pred = predict(X_test, y_test, weights, bias)
     # y_pred = test(X_test, y_test, weights, bias)
     print("y_test:", y_test)
     print("y_pred:", y_pred)
-    accuracy ,TP,FP,FN,TN = utils.evaluate(y_test, y_pred)
+    accuracy ,TP,FP,FN,TN = utils.evaluate(class1,class2, y_test, y_pred)
     return accuracy ,TP,FP,FN,TN
 
 def train(X, y, eta, epochs, mse_threshold, bias):
