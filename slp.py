@@ -52,6 +52,3 @@ def predict(X_test, weights, bias):
         y_pred.append(utils.signum_activation_fn(net))
 
     return np.array(y_pred)  
-
-def signum_activation_fn(x):
-    return 1 if x > 0 else -1 if x < 0 else 0
