@@ -6,13 +6,13 @@ def main(feature1, feature2, class1, class2, eta, epochs, bias):
     print(feature1, feature2, class1, class2, eta, epochs, bias, sep="  ")
     X_train, y_train, X_test, y_test = utils.preprocessing(feature1, feature2, class1, class2)
     weights = train(X_train, y_train, eta, epochs, bias)
-    y_pred= test(X_test,y_test,weights, bias)
+    y_pred= test(X_test,weights, bias)
 
     print("True Labels (Encoded):", y_test)
     print("Predicted Labels (Encoded):", y_pred)
     accuracy ,TP,FP,FN,TN = utils.evaluate(class1,class2,y_test, y_pred)
     return accuracy ,TP,FP,FN,TN
-def test (X_test,y_test,weights, bias):
+def test (X_test,weights, bias):
     y_pred = predict(X_test,weights,bias)
     return y_pred 
 def train(X_train, y_train, eta, epochs, bias):

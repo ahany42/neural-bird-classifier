@@ -15,13 +15,15 @@ def main(feature1, feature2, class1, class2, eta, epochs, mse_threshold, bias):
     
     weights = train(X_train, y_train, eta, epochs, mse_threshold, bias)
     
-    y_pred = predict(X_test, weights, bias)
+    y_pred= test(X_test,weights, bias)
     
     print("y_test:", y_test)
     print("y_pred:", y_pred)
     accuracy, TP, FP, FN, TN = utils.evaluate(class1, class2, y_test, y_pred)
     return accuracy, TP, FP, FN, TN
-
+def test(X_test, weights, bias):
+    y_pred = predict(X_test, weights, bias)
+    return y_pred
 def train(X, y, eta, epochs, mse_threshold, bias):
     X = np.array(X, dtype=np.float64)
     y = np.array(y, dtype=np.float64)
