@@ -59,16 +59,10 @@ def pair_plot():
 
 def feature_distributions():
     df = pd.read_csv('birds_data.csv')
-
-    # Define numeric columns and bird categories
     numeric_columns = ["body_mass", "beak_length", "beak_depth", "fin_length"]
     species_list = df["bird category"].unique()
-
-    # Create subplots
     fig, axes = plt.subplots(2, 2, figsize=(12, 8))
-    axes = axes.ravel()  # Flatten the 2x2 array of axes for easy iteration
-
-    # Plot histograms for each numeric column by bird category
+    axes = axes.ravel()
     for i, column in enumerate(numeric_columns):
         for species in species_list:
             subset = df[df["bird category"] == species]
@@ -78,8 +72,6 @@ def feature_distributions():
         axes[i].set_xlabel(column)
         axes[i].set_ylabel("Frequency")
         axes[i].legend()
-
-    # Adjust layout and display the plot
     plt.tight_layout()
     plt.show()
 

@@ -128,5 +128,6 @@ result_label.grid(row=12, column=0, columnspan=2, pady=(10, 10))
 
 style = ttk.Style()
 style.configure("TMenubutton", background="white")
+root.geometry("400x700")
 
 root.mainloop()
