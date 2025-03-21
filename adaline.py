@@ -58,11 +58,15 @@ def train(X, y, eta, epochs, mse_threshold, bias):
     return weights
 
 def predict(X, weights, bias):
+
     net_input = np.dot(X, weights[1:]) + weights[0] if bias else np.dot(X, weights)
-    y_pred = utils.signum_activation_fn(net_input) 
-    
+
+    y_pred = np.array([utils.signum_activation_fn(x) for x in net_input])
+
     plot_decision_boundary(X, y_pred, weights, bias)
+
     return y_pred
+
 
 def plot_decision_boundary(X, y, weights, bias):
     plt.figure()
