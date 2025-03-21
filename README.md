@@ -81,12 +81,11 @@ pip install numpy pandas matplotlib seaborn
 | Model      | Accuracy (%) |
 | ---------- | ------------ |
 | Perceptron | up to 100%   |
-| ADALINE    | up to 97.5%  |
+| ADALINE    | up to 100%   |
 
 ### Best Features for ADALINE
 
-- **Best Combination:** Beak depth and fin length for categories B and C.\
-  **Accuracy:** 97.5%
+- **Best Combination:** Body mass and Beak Depth for categories a and B.
 
 ### Best Features for Perceptron (SLP)
 
