@@ -5,10 +5,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
-
+import seaborn as sns
 df = pd.read_csv('birds_data.csv')
 
 numerical_features = ['beak_length', 'beak_depth', 'body_mass', 'fin_length']
+
 def apply_pca():
     X = df[numerical_features].fillna(df[numerical_features].mean())  
     scaler = StandardScaler()
@@ -50,18 +51,35 @@ def correlation_matrix():
     plt.yticks(range(len(numerical_features)), numerical_features)
     plt.title("Correlation Matrix")
     plt.show()
+  
+def pair_plot():
+    df = pd.read_csv('birds_data.csv')
+    sns.pairplot(df, hue='bird category')
+    plt.show()
 
 def feature_distributions():
-    fig, axs = plt.subplots(2, 2, figsize=(12, 10))  
-    axs = axs.ravel() 
+    df = pd.read_csv('birds_data.csv')
 
-    for i, feature in enumerate(numerical_features):
-        axs[i].hist(df[feature], bins=20, alpha=0.7, label=feature)
-        axs[i].set_xlabel(feature)
-        axs[i].set_ylabel("Frequency")
-        axs[i].set_title(f"Distribution of {feature}")
-        axs[i].legend(loc='best')
+    # Define numeric columns and bird categories
+    numeric_columns = ["body_mass", "beak_length", "beak_depth", "fin_length"]
+    species_list = df["bird category"].unique()
 
+    # Create subplots
+    fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+    axes = axes.ravel()  # Flatten the 2x2 array of axes for easy iteration
+
+    # Plot histograms for each numeric column by bird category
+    for i, column in enumerate(numeric_columns):
+        for species in species_list:
+            subset = df[df["bird category"] == species]
+            axes[i].hist(subset[column], bins=10, alpha=0.5, label=species)
+        
+        axes[i].set_title(f"Histogram of {column} by Bird Category")
+        axes[i].set_xlabel(column)
+        axes[i].set_ylabel("Frequency")
+        axes[i].legend()
+
+    # Adjust layout and display the plot
     plt.tight_layout()
     plt.show()
 
@@ -95,11 +113,11 @@ def scatter_plots():
     plt.tight_layout()
     plt.show()
 
+
 def create_gui():
     root = tk.Tk()
     root.title("Data Analysis")
-
-    root.geometry("400x400")  
+    root.geometry("400x450")  
     
     gender_button = tk.Button(root, text="Gender Distribution Pie Chart", command=gender_distribution)
     gender_button.pack(pady=10)
@@ -118,10 +136,13 @@ def create_gui():
 
     scatter_plots_button = tk.Button(root, text="Scatter Plots", command=scatter_plots)
     scatter_plots_button.pack(pady=10)
+    
+    pair_plots_button = tk.Button(root, text="Pair Plots", command=pair_plot)
+    pair_plots_button.pack(pady=10)
 
     pca_button = tk.Button(root, text="Apply PCA", command=apply_pca)
     pca_button.pack(pady=10)
+    
+
 
     root.mainloop()
-
-
