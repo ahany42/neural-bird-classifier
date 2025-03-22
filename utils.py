@@ -14,11 +14,19 @@ def evaluate(class1, class2, y, y_pred):
     accuracy = (TP + TN) / (TP + TN + FP + FN) * 100
     return accuracy, TP, FP, FN, TN
 
+def tanh_activation_fn(x):
+    positive_expo = np.exp(x)
+    negative_expo = np.exp(-x)
+    return (positive_expo - negative_expo) / (positive_expo + negative_expo)
+
 def linear_activation_fn(x):
     return x;
 
+def sigmoid_activation_fn(x):
+    return 1 / (1 + np.exp(-x))
+
 def signum_activation_fn(x):
-    return 1 if x > 0 else -1
+    return 1 if x > 0 else -1 if x < 0 else 0
 
 def preprocessing(feature1, feature2, class1, class2):
     df = pd.read_csv('birds_data.csv')
