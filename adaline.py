@@ -7,7 +7,7 @@ def main(feature1, feature2, class1, class2, eta, epochs, mse_threshold, bias):
     print("Adaline")
     print(feature1, feature2, class1, class2, eta, epochs, mse_threshold, bias, sep="  ")
     
-    X_train, y_train, X_test, y_test = utils.preprocessing(feature1, feature2, class1, class2)
+    X_train, y_train, X_test, y_test = utils.preprocessing(feature1, feature2, class1, class2,"Adaline")
     
     
     X_train = (X_train - X_train.mean(axis=0)) / (X_train.std(axis=0) + 1e-6)
