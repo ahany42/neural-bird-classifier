@@ -56,7 +56,17 @@ def preprocessing(feature1, feature2, class1, class2,algorithm):
 
         return X_train, y_train, X_test, y_test
     elif algorithm == "mlp":
-        #mlp pre processing here
-        pass
+        df = pd.read_csv('birds_data.csv')
+        df["gender"].fillna(df["gender"].mode()[0], inplace=True)
+        df = pd.get_dummies(df, columns=df.columns, prefix=df.columns)
+
+        bird_category_cols = [col for col in df.columns if col.startswith('bird category')]
+        X = df.drop(columns=bird_category_cols).values
+        y = df[bird_category_cols].values
+
+        X = (X - X.mean(axis=0)) / (X.std(axis=0) + 1e-6)
+
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=42)
+        return X_train, y_train, X_test, y_test
     else:
         print("Invalid Algorithm")
