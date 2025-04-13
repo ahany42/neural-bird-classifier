@@ -25,6 +25,9 @@ def linear_activation_fn(x):
 def sigmoid_activation_fn(x):
     return 1 / (1 + np.exp(-x))
 
+def sigmoid_derivative(z):
+    return (z)(1-z)
+
 def signum_activation_fn(x):
     return 1 if x > 0 else -1 if x < 0 else 0
 

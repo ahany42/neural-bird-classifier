@@ -41,31 +41,32 @@ def toggle_mse_entry():
 def train_model():
     """Trains the selected algorithm with user-provided parameters."""
     try:
-        result_label.config(text="")  
+        result_label.config(text="") 
         feature1, feature2 = feature1_var.get(), feature2_var.get()
         class1, class2 = class1_var.get(), class2_var.get()
         eta_text, epochs_text = eta_entry.get().strip(), epochs_entry.get().strip()
-        mse_text = mse_entry.get().strip() if algo_var.get() == "Adaline" else "N/A"
+        mse_text = mse_entry.get().strip() if algo_var.get() == "Adaline" or algo_var.get() == "mlp" else "N/A"
         bias = bias_var.get()
         algorithm = algo_var.get()
 
-        if feature1 == DEFAULT_FEATURE or feature2 == DEFAULT_FEATURE:
-            messagebox.showerror("Input Error", "Please select both features.")
-            return
-        if feature1 == feature2:
-            messagebox.showerror("Input Error", "Selected features must be different.")
-            return
-        if class1 == DEFAULT_CLASS or class2 == DEFAULT_CLASS:
-            messagebox.showerror("Input Error", "Please select both classes.")
-            return
-        if class1 == class2:
-            messagebox.showerror("Input Error", "Selected classes must be different.")
-            return
+        if algorithm != "mlp":
+            if feature1 == DEFAULT_FEATURE or feature2 == DEFAULT_FEATURE:
+                messagebox.showerror("Input Error", "Please select both features.")
+                return
+            if feature1 == feature2:
+                messagebox.showerror("Input Error", "Selected features must be different.")
+                return
+            if class1 == DEFAULT_CLASS or class2 == DEFAULT_CLASS:
+                messagebox.showerror("Input Error", "Please select both classes.")
+                return
+            if class1 == class2:
+                messagebox.showerror("Input Error", "Selected classes must be different.")
+                return
         
         try:
             eta = float(eta_text)
             epochs = int(epochs_text)
-            mse_threshold = float(mse_text) if algo_var.get() == "Adaline" else "N/A"
+            mse_threshold = float(mse_text) if algo_var.get() == "Adaline" or algo_var.get() == "mlp" else "N/A"
             hidden_layers = int(hidden_layer_entry.get()) if algo_var.get() == "mlp" else "N/A"
         except ValueError:
             if algorithm == "slp":
@@ -82,7 +83,7 @@ def train_model():
             accuracy, TP, FP, FN, TN = adaline.main(feature1, feature2, class1, class2, eta, epochs, mse_threshold, bias)
         elif algorithm == "mlp":
             activation_function = activation_var.get()
-            accuracy, TP, FP, FN, TN = mlp.main(eta, epochs, bias, hidden_layers, activation_function)
+            accuracy, TP, FP, FN, TN = mlp.main(eta, epochs, bias, hidden_layers, activation_function, mse_threshold)
 
         result_label.config(text=f"""
         Confusion Matrix:
@@ -103,6 +104,26 @@ def open_data_analysis():
         data_analysis.create_gui()
     except Exception as e:
         messagebox.showerror("Error", f"Failed to run data analysis: {e}")
+        
+def hide_feature_class_selection():
+    if algo_var.get() == "mlp":
+        feature1_label.grid_forget()
+        feature1_dropdown.grid_forget()
+        feature2_label.grid_forget()
+        feature2_dropdown.grid_forget()
+        class1_label.grid_forget()
+        class1_dropdown.grid_forget()
+        class2_label.grid_forget()
+        class2_dropdown.grid_forget()
+    else:
+        feature1_label.grid(row=0, column=0, columnspan=2, sticky='w', pady=(5, 0))
+        feature1_dropdown.grid(row=1, column=0, padx=5, pady=(0, 10))
+        feature2_label.grid(row=0, column=1, columnspan=2, sticky='w', pady=(5, 0))
+        feature2_dropdown.grid(row=1, column=1, padx=5, pady=(0, 10))
+        class1_label.grid(row=2, column=0, columnspan=2, sticky='w', pady=(5, 0))
+        class1_dropdown.grid(row=3, column=0, padx=5, pady=(0, 10))
+        class2_label.grid(row=2, column=1, columnspan=2, sticky='w', pady=(5, 0))
+        class2_dropdown.grid(row=3, column=1, padx=5, pady=(0, 10))
 
 root = tk.Tk()
 root.title("SLP, Adaline & MLP Trainer")
@@ -123,13 +144,25 @@ algo_var = tk.StringVar(value="slp")
 activation_var = tk.StringVar(value="sigmoid")
 bias_var = tk.BooleanVar()
 
-ttk.Label(frame, text="Select Features:").grid(row=0, column=0, columnspan=2, sticky='w', pady=(5, 0))
-ttk.OptionMenu(frame, feature1_var, DEFAULT_FEATURE, *feature_options).grid(row=1, column=0, padx=5, pady=(0, 10))
-ttk.OptionMenu(frame, feature2_var, DEFAULT_FEATURE, *feature_options).grid(row=1, column=1, padx=5, pady=(0, 10))
+feature1_label = ttk.Label(frame, text="Select Features:")
+feature1_label.grid(row=0, column=0, columnspan=2, sticky='w', pady=(5, 0))
+feature1_dropdown = ttk.OptionMenu(frame, feature1_var, DEFAULT_FEATURE, *feature_options)
+feature1_dropdown.grid(row=1, column=0, padx=5, pady=(0, 10))
 
-ttk.Label(frame, text="Select Classes:").grid(row=2, column=0, columnspan=2, sticky='w', pady=(5, 0))
-ttk.OptionMenu(frame, class1_var, DEFAULT_CLASS, *class_options).grid(row=3, column=0, padx=5, pady=(0, 10))
-ttk.OptionMenu(frame, class2_var, DEFAULT_CLASS, *class_options).grid(row=3, column=1, padx=5, pady=(0, 10))
+feature2_label = ttk.Label(frame, text="Select Features:")
+feature2_label.grid(row=0, column=1, columnspan=2, sticky='w', pady=(5, 0))
+feature2_dropdown = ttk.OptionMenu(frame, feature2_var, DEFAULT_FEATURE, *feature_options)
+feature2_dropdown.grid(row=1, column=1, padx=5, pady=(0, 10))
+
+class1_label = ttk.Label(frame, text="Select Classes:")
+class1_label.grid(row=2, column=0, columnspan=2, sticky='w', pady=(5, 0))
+class1_dropdown = ttk.OptionMenu(frame, class1_var, DEFAULT_CLASS, *class_options)
+class1_dropdown.grid(row=3, column=0, padx=5, pady=(0, 10))
+
+class2_label = ttk.Label(frame, text="Select Classes:")
+class2_label.grid(row=2, column=1, columnspan=2, sticky='w', pady=(5, 0))
+class2_dropdown = ttk.OptionMenu(frame, class2_var, DEFAULT_CLASS, *class_options)
+class2_dropdown.grid(row=3, column=1, padx=5, pady=(0, 10))
 
 ttk.Label(frame, text="Learning Rate (eta):").grid(row=4, column=0, sticky='w', pady=(5, 0))
 eta_entry = ttk.Entry(frame)
@@ -148,7 +181,7 @@ tanh_radio = ttk.Radiobutton(frame, text="Tanh", variable=activation_var, value=
 
 ttk.Label(frame, text="Select Algorithm:").grid(row=6, column=0, columnspan=2, sticky='w', pady=(5, 0))
 for i, name in enumerate(["slp", "Adaline", "mlp"]):
-    ttk.Radiobutton(frame, text=name, variable=algo_var, value=name, command=toggle_mse_entry).grid(row=8, column=i, sticky='w')
+    ttk.Radiobutton(frame, text=name, variable=algo_var, value=name, command=lambda: [toggle_mse_entry(), hide_feature_class_selection()]).grid(row=8, column=i, sticky='w')
 
 ttk.Button(frame, text="Train", command=train_model).grid(row=16, column=0, columnspan=2, pady=(10, 10))
 ttk.Button(frame, text="Data Analysis", command=open_data_analysis).grid(row=17, column=0, columnspan=2, pady=(10, 10))
