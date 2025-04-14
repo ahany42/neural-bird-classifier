@@ -13,6 +13,7 @@ def evaluate(class1, class2, y, y_pred):
 
     accuracy = (TP + TN) / (TP + TN + FP + FN) * 100
     return accuracy, TP, FP, FN, TN
+
 def activation_fn(x, activation_function):
     if activation_function == "tanh":
         positive_expo = np.exp(x)
@@ -32,7 +33,7 @@ def activation_fn_derivative(z, activation_function):
     elif activation_function == "sigmoid":
         return (z)(1-z)
 
-def preprocessing(feature1, feature2, class1, class2,algorithm):
+def preprocessing(algorithm,feature1=None, feature2=None, class1=None, class2=None):
     if algorithm == "slp" or algorithm == "Adaline":
         df = pd.read_csv('birds_data.csv')
         df["gender"].fillna(df["gender"].mode()[0], inplace=True)

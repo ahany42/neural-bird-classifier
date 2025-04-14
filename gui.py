@@ -5,6 +5,7 @@ import adaline
 import mlp
 import pandas as pd
 import data_analysis
+import numpy as np
 
 df = pd.read_csv('birds_data.csv')
 
@@ -19,25 +20,47 @@ def toggle_mse_entry():
         mse_entry.grid(row=9, column=1, pady=(5, 10))
         hidden_layers_label.grid_forget()
         hidden_layer_entry.grid_forget()
+        neurons_label.grid_forget()
+        neurons_entry.grid_forget()
         activation_label.grid_forget()
         sigmoid_radio.grid_forget()
         tanh_radio.grid_forget()
+        bias_checkbox.grid(row=7, column=0, sticky='w', pady=(5, 0))
     elif algo_var.get() == "mlp":
         mse_label.grid(row=9, column=0, sticky='w', pady=(5, 0))
         mse_entry.grid(row=9, column=1, pady=(5, 10))
         hidden_layers_label.grid(row=10, column=0, sticky='w', pady=(5, 0))
         hidden_layer_entry.grid(row=10, column=1, pady=(5, 10))
-        activation_label.grid(row=11, column=0, sticky='w', pady=(5, 0))
-        sigmoid_radio.grid(row=11, column=1, sticky='w', pady=(5, 0))
-        tanh_radio.grid(row=11, column=2, sticky='w', pady=(5, 0))
+        neurons_label.grid(row=11, column=0, sticky='w', pady=(5, 0))
+        neurons_entry.grid(row=11, column=1, pady=(5, 10))
+        activation_label.grid(row=12, column=0, sticky='w', pady=(5, 0))
+        sigmoid_radio.grid(row=12, column=1, sticky='w', pady=(5, 0))
+        tanh_radio.grid(row=12, column=2, sticky='w', pady=(5, 0))
+        bias_checkbox.grid(row=7, column=0, sticky='w', pady=(5, 0))
     else:
         mse_label.grid_forget()
         mse_entry.grid_forget()
         hidden_layers_label.grid_forget()
         hidden_layer_entry.grid_forget()
+        neurons_label.grid_forget()
+        neurons_entry.grid_forget()
         activation_label.grid_forget()
         sigmoid_radio.grid_forget()
         tanh_radio.grid_forget()
+        bias_checkbox.grid(row=7, column=0, sticky='w', pady=(5, 0))
+
+def format_confusion_matrix(confusion_matrix, classes):
+    # Create header
+    header = "Predicted | " + " | ".join(f"{c:^10}" for c in classes) + " |"
+    separator = "-" * (len(header) + 2)
+    
+    # Create rows
+    rows = []
+    for i, actual in enumerate(classes):
+        row = f"Actual {actual} | " + " | ".join(f"{confusion_matrix[i][j]:^10}" for j in range(len(classes))) + " |"
+        rows.append(row)
+    
+    return "\n".join([header, separator] + rows)
 
 def train_model():
     try:
@@ -46,7 +69,7 @@ def train_model():
         class1, class2 = class1_var.get(), class2_var.get()
         eta_text, epochs_text = eta_entry.get().strip(), epochs_entry.get().strip()
         mse_text = mse_entry.get().strip() if algo_var.get() == "Adaline" or algo_var.get() == "mlp" else "N/A"
-        bias = bias_var.get()
+        bias = bias_var.get()  
         algorithm = algo_var.get()
 
         if algorithm != "mlp":
@@ -68,6 +91,7 @@ def train_model():
             epochs = int(epochs_text)
             mse_threshold = float(mse_text) if algo_var.get() == "Adaline" or algo_var.get() == "mlp" else "N/A"
             hidden_layers = int(hidden_layer_entry.get()) if algo_var.get() == "mlp" else "N/A"
+            neurons_per_layer = int(neurons_entry.get()) if algo_var.get() == "mlp" else "N/A"
         except ValueError:
             if algorithm == "slp":
                 messagebox.showerror("Input Error", "Ensure Learning Rate and Epochs are valid numbers.")
@@ -79,21 +103,38 @@ def train_model():
 
         if algorithm == "slp":
             accuracy, TP, FP, FN, TN = slp.main(feature1, feature2, class1, class2, eta, epochs, bias)
+            result_text = f"""
+            Confusion Matrix:
+            Predicted |  {class1}  |  {class2}  |
+            ----------------------
+            Actual {class1} | {TP:3} | {FN:3} |
+            Actual {class2} | {FP:3} | {TN:3} |
+
+            Accuracy: {accuracy:.2f} %
+            """
         elif algorithm == "Adaline":
             accuracy, TP, FP, FN, TN = adaline.main(feature1, feature2, class1, class2, eta, epochs, mse_threshold, bias)
+            result_text = f"""
+            Confusion Matrix:
+            Predicted |  {class1}  |  {class2}  |
+            ----------------------
+            Actual {class1} | {TP:3} | {FN:3} |
+            Actual {class2} | {FP:3} | {TN:3} |
+
+            Accuracy: {accuracy:.2f} %
+            """
         elif algorithm == "mlp":
             activation_function = activation_var.get()
-            accuracy, TP, FP, FN, TN = mlp.main(eta, epochs, bias, hidden_layers, activation_function, mse_threshold)
+            confusion_matrix, accuracy = mlp.main(eta, epochs, bias, neurons_per_layer, hidden_layers, activation_function, mse_threshold)
+            classes = df['bird category'].unique()
+            result_text = f"""
+            Confusion Matrix:
+            {format_confusion_matrix(confusion_matrix, classes)}
 
-        result_label.config(text=f"""
-        Confusion Matrix:
-        Predicted |  {class1}  |  {class2}  |
-        ----------------------
-        Actual {class1} | {TP:3} | {FN:3} |
-        Actual {class2} | {FP:3} | {TN:3} |
+            Overall Accuracy: {accuracy:.2f} %
+            """
 
-        Accuracy: {accuracy:.2f} %
-        """)
+        result_label.config(text=result_text)
         result_label.grid(row=13, column=0, columnspan=3, pady=10)
     except Exception as e:
         messagebox.showerror("Unexpected Error", str(e))
@@ -141,7 +182,7 @@ class1_var = tk.StringVar(value=DEFAULT_CLASS)
 class2_var = tk.StringVar(value=DEFAULT_CLASS)
 algo_var = tk.StringVar(value="slp")
 activation_var = tk.StringVar(value="sigmoid")
-bias_var = tk.BooleanVar()
+bias_var = tk.BooleanVar(value=False)  
 
 feature1_label = ttk.Label(frame, text="Select Features:")
 feature1_label.grid(row=0, column=0, columnspan=2, sticky='w', pady=(5, 0))
@@ -170,10 +211,15 @@ ttk.Label(frame, text="Number of Epochs:").grid(row=5, column=0, sticky='w', pad
 epochs_entry = ttk.Entry(frame)
 epochs_entry.grid(row=5, column=1, pady=(0, 10))
 
+bias_checkbox = ttk.Checkbutton(frame, text="Use Bias", variable=bias_var)
+bias_checkbox.grid(row=7, column=0, sticky='w', pady=(5, 0))
+
 mse_label = ttk.Label(frame, text="MSE Threshold:")
 mse_entry = ttk.Entry(frame)
 hidden_layers_label = ttk.Label(frame, text="Hidden Layers:")
 hidden_layer_entry = ttk.Entry(frame)
+neurons_label = ttk.Label(frame, text="Neurons per Layer:")
+neurons_entry = ttk.Entry(frame)
 activation_label = ttk.Label(frame, text="Activation Function:")
 sigmoid_radio = ttk.Radiobutton(frame, text="Sigmoid", variable=activation_var, value="sigmoid")
 tanh_radio = ttk.Radiobutton(frame, text="Tanh", variable=activation_var, value="tanh")
