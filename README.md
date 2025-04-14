@@ -1,12 +1,13 @@
-# 🦜 Bird Classification using Perceptron (SLP) & ADALINE
+# 🦜 Bird Classification using Perceptron (SLP & MLP) & ADALINE
 
-A single-layer neural network implementation to classify bird species using the **Perceptron (SLP)** and **ADALINE** algorithms. The project includes **data analysis**, **training & testing**, **implementing Mean Squared Error (MSE)**, **activation functions**, and a **GUI for visualization**.
+A neural network-based bird species classification project implementing Perceptron (SLP), ADALINE, and Multi-Layer Perceptron (MLP) algorithms. The project includes data analysis, training & testing, implementing Mean Squared Error (MSE), activation functions, and a GUI for visualization.
 
 ---
 
 ## 🚀 Features
 
 - ✅ Implementation of **Single Layer Perceptron (SLP)**
+- ✅ Implementation of **Multi Layer Perceptron (MLP)**
 - ✅ Implementation of **ADALINE** with **MSE loss**
 - ✅ Custom **training & testing** (30/20 split per class)
 - ✅ **Data analysis** (feature distribution, correlation, and visualizations)
@@ -37,7 +38,8 @@ pip install numpy pandas matplotlib seaborn
 ```bash
 /bird-classification
 │── main.py          # Main entry point to train and test models
-│── slp.py           # Perceptron Learning Algorithm (SLP)
+│── slp.py           # Single Layer Perceptron Learning Algorithm (SLP)
+│── mlp.py           # Multi Layer Perceptron Learning Algorithm (MLP)
 │── adaline.py       # ADALINE Learning Algorithm (MSE)
 │── utils.py         # Common functions (data loading, splitting, visualization)
 │── gui.py           # GUI for visualization & interaction
@@ -69,19 +71,26 @@ pip install numpy pandas matplotlib seaborn
 - Trained with **perceptron learning rule**
 - Outputs **binary class labels**
 
-### **2️⃣ ADALINE (Adaptive Linear Neuron)**
+### **2️⃣ Adaptive Linear Neuron (Adaline)**
 
 - Uses **linear activation function during training**
 - Uses **signum activation function during testing**
 - Optimized using **Mean Squared Error (MSE)**
 - Outputs **continuous values** before thresholding
 
+### **3️⃣ Multi-Layer Perceptron (MLP)**
+
+- Uses **Sigmoid  or tanh activation function during training**
+- Dynamic Number of Hidden Layers 
+- Outputs **continuous values** before thresholding
+
 ## 📊 Results & Performance
 
-| Model      | Accuracy (%) |
-| ---------- | ------------ |
-| Perceptron | up to 100%   |
-| ADALINE    | up to 100%   |
+| Model      | Test Accuracy (%) |
+| ---------- | ----------------- |
+| Perceptron |    up to 100%     |
+| ADALINE    |    up to 100%     |
+| MLP        |                   |
 
 ### Best Features for ADALINE
 
