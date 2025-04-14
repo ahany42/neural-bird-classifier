@@ -10,9 +10,10 @@ df = pd.read_csv('birds_data.csv')
 
 DEFAULT_FEATURE = "Select Feature"
 DEFAULT_CLASS = "Select Class"
+def start_gui():
+    root.mainloop()
 
 def toggle_mse_entry():
-    """Toggles the visibility of MSE and hidden layer fields based on the selected algorithm."""
     if algo_var.get() == "Adaline":
         mse_label.grid(row=9, column=0, sticky='w', pady=(5, 0))
         mse_entry.grid(row=9, column=1, pady=(5, 10))
@@ -39,7 +40,6 @@ def toggle_mse_entry():
         tanh_radio.grid_forget()
 
 def train_model():
-    """Trains the selected algorithm with user-provided parameters."""
     try:
         result_label.config(text="") 
         feature1, feature2 = feature1_var.get(), feature2_var.get()
@@ -99,7 +99,6 @@ def train_model():
         messagebox.showerror("Unexpected Error", str(e))
 
 def open_data_analysis():
-    """Opens the data analysis module."""
     try:
         data_analysis.create_gui()
     except Exception as e:
@@ -191,4 +190,3 @@ result_label.grid(row=18, column=0, columnspan=2, pady=(10, 10))
 style = ttk.Style()
 style.configure("TMenubutton", background="white")
 root.geometry("500x700")
-root.mainloop()
