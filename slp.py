@@ -33,7 +33,7 @@ def train(X_train, y_train, eta, epochs, bias):
     for epoch in range(epochs):
         for i in range(X_train.shape[0]):  
             net = np.dot(X_train[i], weights)
-            y_pred = utils.signum_activation_fn(net)  
+            y_pred = utils.activation_fn(net,"signum")  
 
             target = y_train[i]
             error = target - y_pred  
@@ -52,6 +52,6 @@ def predict(X_test, weights, bias):
 
     for i in range(len(X_test)):
         net = np.dot(X_test[i], weights)
-        y_pred.append(utils.signum_activation_fn(net))
+        y_pred.append(utils.activation_fn(net,"signum"))
 
     return np.array(y_pred)  

@@ -13,23 +13,24 @@ def evaluate(class1, class2, y, y_pred):
 
     accuracy = (TP + TN) / (TP + TN + FP + FN) * 100
     return accuracy, TP, FP, FN, TN
-
-def tanh_activation_fn(x):
-    positive_expo = np.exp(x)
-    negative_expo = np.exp(-x)
-    return (positive_expo - negative_expo) / (positive_expo + negative_expo)
-
-def linear_activation_fn(x):
-    return x;
-
-def sigmoid_activation_fn(x):
-    return 1 / (1 + np.exp(-x))
-
-def sigmoid_derivative(z):
-    return (z)(1-z)
-
-def signum_activation_fn(x):
-    return 1 if x > 0 else -1 if x < 0 else 0
+def activation_fn(x, activation_function):
+    if activation_function == "tanh":
+        positive_expo = np.exp(x)
+        negative_expo = np.exp(-x)
+        return (positive_expo - negative_expo) / (positive_expo + negative_expo)
+    elif activation_function == "sigmoid":
+        return 1 / (1 + np.exp(-x))
+    elif activation_function == "linear":
+        return x;
+    elif activation_function == "signum":
+        return 1 if x > 0 else -1 if x < 0 else 0
+    else:
+        print("Invalid activation function")
+def activation_fn_derivative(z, activation_function):
+    if activation_function == "tanh":
+        return 1 - z**2
+    elif activation_function == "sigmoid":
+        return (z)(1-z)
 
 def preprocessing(feature1, feature2, class1, class2,algorithm):
     if algorithm == "slp" or algorithm == "Adaline":

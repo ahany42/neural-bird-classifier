@@ -39,7 +39,7 @@ def train(X, y, eta, epochs, mse_threshold, bias):
 
         for i in range(len(X)):  
             net_input = np.dot(X[i], weights[1:]) + weights[0] if bias else np.dot(X[i], weights)
-            output = utils.linear_activation_fn(net_input)
+            output = utils.activation_fn(net_input,"linear")
             error = y[i] - output
             
             if bias:
@@ -61,7 +61,7 @@ def predict(X, weights, bias):
 
     net_input = np.dot(X, weights[1:]) + weights[0] if bias else np.dot(X, weights)
 
-    y_pred = np.array([utils.signum_activation_fn(x) for x in net_input])
+    y_pred = np.array([utils.activation_fn(x,"signum") for x in net_input])
 
     plot_decision_boundary(X, y_pred, weights, bias)
 
