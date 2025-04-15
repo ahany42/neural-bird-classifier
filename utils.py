@@ -31,7 +31,7 @@ def activation_fn_derivative(z, activation_function):
     if activation_function == "tanh":
         return 1 - z**2
     elif activation_function == "sigmoid":
-        return (z)(1-z)
+        return z * (1-z)
 
 def preprocessing(algorithm,feature1=None, feature2=None, class1=None, class2=None):
     if algorithm == "slp" or algorithm == "Adaline":
