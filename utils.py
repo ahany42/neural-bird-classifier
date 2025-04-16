@@ -36,7 +36,7 @@ def activation_fn_derivative(z, activation_function):
 def preprocessing(algorithm,feature1=None, feature2=None, class1=None, class2=None):
     if algorithm == "slp" or algorithm == "Adaline":
         df = pd.read_csv('birds_data.csv')
-        df["gender"].fillna(df["gender"].mode()[0], inplace=True)
+        df["gender"] = df["gender"].fillna(df["gender"].mode()[0])
         df["gender"] = df["gender"].astype("category").cat.codes  
 
         df_filtered = df[df["bird category"].isin([class1, class2])].copy()

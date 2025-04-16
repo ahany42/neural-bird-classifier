@@ -91,7 +91,7 @@ def train_model():
             epochs = int(epochs_text)
             mse_threshold = float(mse_text) if algo_var.get() == "Adaline" or algo_var.get() == "mlp" else "N/A"
             hidden_layers = int(hidden_layer_entry.get()) if algo_var.get() == "mlp" else "N/A"
-            neurons_per_layer = int(neurons_entry.get()) if algo_var.get() == "mlp" else "N/A"
+            neurons_per_layer = neurons_entry.get() if algo_var.get() == "mlp" else "N/A"
         except ValueError:
             if algorithm == "slp":
                 messagebox.showerror("Input Error", "Ensure Learning Rate and Epochs are valid numbers.")
@@ -218,7 +218,7 @@ mse_label = ttk.Label(frame, text="MSE Threshold:")
 mse_entry = ttk.Entry(frame)
 hidden_layers_label = ttk.Label(frame, text="Hidden Layers:")
 hidden_layer_entry = ttk.Entry(frame)
-neurons_label = ttk.Label(frame, text="Neurons per Layer:")
+neurons_label = ttk.Label(frame, text="Neurons per Layers Comma Separated:")
 neurons_entry = ttk.Entry(frame)
 activation_label = ttk.Label(frame, text="Activation Function:")
 sigmoid_radio = ttk.Radiobutton(frame, text="Sigmoid", variable=activation_var, value="sigmoid")

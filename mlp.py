@@ -3,12 +3,24 @@ import utils
 
 def main(activation_function, bias, neurons_per_hidden_layer, hidden_layers, eta, epochs, mse_threshold):
     X_train, y_train, X_test, y_test = utils.preprocessing("mlp")
+
+  
+    # Parse the neurons_per_hidden_layer if it is a string of comma-separated values
+    if isinstance(neurons_per_hidden_layer, str):
+        neurons_per_hidden_layer = list(map(int, neurons_per_hidden_layer.split(',')))
+    
+    # Adjust the number of neurons per hidden layer to match the number of hidden layers
+    if len(neurons_per_hidden_layer) > hidden_layers:
+        neurons_per_hidden_layer = neurons_per_hidden_layer[:hidden_layers]
+    elif len(neurons_per_hidden_layer) < hidden_layers:
+        neurons_per_hidden_layer += [neurons_per_hidden_layer[-1]] * (hidden_layers - len(neurons_per_hidden_layer))
+
     weights, biases = train(X_train, y_train, activation_function, bias, neurons_per_hidden_layer, hidden_layers, eta, epochs, mse_threshold)
     
     # Train and test accuracies
     train_tanh_confusion_matrix, train_tanh_accuracy_value = train_accuracy(X_train, y_train, weights, biases, bias, 'tanh')
-    train_sigmoid_confusion_matrix, train_sigmoid_accuracy_value = train_accuracy(X_train, y_train, weights, biases, bias, 'sigmoid')
     test_tanh_confusion_matrix, test_tanh_accuracy_value = test_accuracy(X_test, y_test, weights, biases, bias, 'tanh')
+    train_sigmoid_confusion_matrix, train_sigmoid_accuracy_value = train_accuracy(X_train, y_train, weights, biases, bias, 'sigmoid')
     test_sigmoid_confusion_matrix, test_sigmoid_accuracy_value = test_accuracy(X_test, y_test, weights, biases, bias, 'sigmoid')
     
     print("Tanh Training Accuracy: {:.2f}%".format(train_tanh_accuracy_value))
@@ -31,9 +43,6 @@ def train(X_train, y_train, activation_function, bias, neurons_per_hidden_layer,
     # Initialize weights and biases
     weights = []
     biases = []
-
-    if isinstance(neurons_per_hidden_layer, int):
-        neurons_per_hidden_layer = [neurons_per_hidden_layer] * hidden_layers
 
     input_size = X_train.shape[1]
     weights.append(np.random.randn(input_size, neurons_per_hidden_layer[0]))
@@ -60,6 +69,11 @@ def train(X_train, y_train, activation_function, bias, neurons_per_hidden_layer,
             layer_inputs.append(net)
             layer_outputs.append(output)
 
+        # Ensure dimensions match
+        print("Shape of y_train:", y_train.shape)
+        print("Shape of final output:", layer_outputs[-1].shape)
+
+        # MSE loss calculation
         mse = np.mean((y_train - layer_outputs[-1]) ** 2)
         if mse < mse_threshold:
             break
@@ -122,8 +136,8 @@ def train_accuracy(X_train, y_train, weights, biases, bias, activation_function)
 # Example of running the model with 'sigmoid' activation
 activation_function = 'sigmoid'  # Try 'tanh' or 'sigmoid'
 bias = True  # Set to False if no bias is needed
-neurons_per_hidden_layer = 5  # Adjust as needed
-hidden_layers = 2  # Adjust as needed
+neurons_per_hidden_layer = '5,10,11,12,8,5,9'  # Comma-separated string
+hidden_layers = 3  # Adjust as needed
 eta = 0.1  # Learning rate
 epochs = 1000  # Number of epochs for training
 mse_threshold = 0.01  # Mean squared error threshold for stopping criterion
