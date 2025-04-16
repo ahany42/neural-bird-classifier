@@ -33,7 +33,7 @@ def activation_fn_derivative(z, activation_function):
     elif activation_function == "sigmoid":
         return z * (1-z)
 
-def preprocessing(algorithm,feature1=None, feature2=None, class1=None, class2=None):
+def preprocessing(algorithm, feature1=None, feature2=None, class1=None, class2=None):
     if algorithm == "slp" or algorithm == "Adaline":
         df = pd.read_csv('birds_data.csv')
         df["gender"] = df["gender"].fillna(df["gender"].mode()[0])
@@ -62,16 +62,73 @@ def preprocessing(algorithm,feature1=None, feature2=None, class1=None, class2=No
         return X_train, y_train, X_test, y_test
     elif algorithm == "mlp":
         df = pd.read_csv('birds_data.csv')
+        
+        # Handle missing values
         df["gender"].fillna(df["gender"].mode()[0], inplace=True)
-        df = pd.get_dummies(df, columns=df.columns, prefix=df.columns)
-
-        bird_category_cols = [col for col in df.columns if col.startswith('bird category')]
-        X = df.drop(columns=bird_category_cols).values
-        y = df[bird_category_cols].values
-
-        X = (X - X.mean(axis=0)) / (X.std(axis=0) + 1e-6)
-
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=42)
+        
+        # Select numeric features
+        numeric_features = ['beak_length', 'beak_depth', 'body_mass', 'fin_length']
+        X_numeric = df[numeric_features].values
+        
+        # One-hot encode gender
+        gender_dummies = pd.get_dummies(df['gender'], prefix='gender')
+        X_categorical = gender_dummies.values
+        
+        # Combine numeric and categorical features
+        X = np.hstack([X_numeric, X_categorical])
+        
+        # One-hot encode the target variable
+        y = pd.get_dummies(df['bird category']).values
+        
+        # Normalize numeric features only
+        X_numeric_normalized = (X_numeric - X_numeric.mean(axis=0)) / (X_numeric.std(axis=0) + 1e-6)
+        
+        # Combine normalized numeric features with categorical features
+        X = np.hstack([X_numeric_normalized, X_categorical])
+        
+        # Get unique classes
+        unique_classes = df['bird category'].unique()
+        
+        # Initialize empty arrays for train and test sets
+        X_train_list = []
+        X_test_list = []
+        y_train_list = []
+        y_test_list = []
+        
+        # For each class, select 30 samples for training and 20 for testing
+        for class_name in unique_classes:
+            # Get indices for current class
+            class_indices = df[df['bird category'] == class_name].index
+            
+            # Shuffle the indices
+            np.random.seed(42)  # For reproducibility
+            shuffled_indices = np.random.permutation(class_indices)
+            
+            # Split into train and test
+            train_indices = shuffled_indices[:30]
+            test_indices = shuffled_indices[30:50]  # Take next 20 samples
+            
+            # Add to train and test sets
+            X_train_list.append(X[train_indices])
+            X_test_list.append(X[test_indices])
+            y_train_list.append(y[train_indices])
+            y_test_list.append(y[test_indices])
+        
+        # Combine all classes
+        X_train = np.vstack(X_train_list)
+        X_test = np.vstack(X_test_list)
+        y_train = np.vstack(y_train_list)
+        y_test = np.vstack(y_test_list)
+        
+        # Final shuffle of the combined data
+        train_indices = np.random.permutation(len(X_train))
+        test_indices = np.random.permutation(len(X_test))
+        
+        X_train = X_train[train_indices]
+        y_train = y_train[train_indices]
+        X_test = X_test[test_indices]
+        y_test = y_test[test_indices]
+        
         return X_train, y_train, X_test, y_test
     else:
         print("Invalid Algorithm")
