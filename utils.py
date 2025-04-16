@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+
 def evaluate(class1, class2, y, y_pred):
     y_decoded = np.where(y == -1, class1, class2)
     y_pred_decoded = np.where(y_pred == -1, class1, class2)
@@ -27,6 +29,7 @@ def activation_fn(x, activation_function):
         return 1 if x > 0 else -1 if x < 0 else 0
     else:
         print("Invalid activation function")
+
 def activation_fn_derivative(z, activation_function):
     if activation_function == "tanh":
         return 1 - z**2
@@ -70,21 +73,20 @@ def preprocessing(algorithm, feature1=None, feature2=None, class1=None, class2=N
         numeric_features = ['beak_length', 'beak_depth', 'body_mass', 'fin_length']
         X_numeric = df[numeric_features].values
         
-        # One-hot encode gender
-        gender_dummies = pd.get_dummies(df['gender'], prefix='gender')
-        X_categorical = gender_dummies.values
+        # One-hot encode gender using scikit-learn
+        gender_encoder = OneHotEncoder(sparse_output=False)
+        X_categorical = gender_encoder.fit_transform(df[['gender']])
         
-        # Combine numeric and categorical features
-        X = np.hstack([X_numeric, X_categorical])
-        
-        # One-hot encode the target variable
-        y = pd.get_dummies(df['bird category']).values
-        
-        # Normalize numeric features only
-        X_numeric_normalized = (X_numeric - X_numeric.mean(axis=0)) / (X_numeric.std(axis=0) + 1e-6)
+        # Normalize numeric features
+        scaler = StandardScaler()
+        X_numeric_normalized = scaler.fit_transform(X_numeric)
         
         # Combine normalized numeric features with categorical features
         X = np.hstack([X_numeric_normalized, X_categorical])
+        
+        # One-hot encode the target variable
+        target_encoder = OneHotEncoder(sparse_output=False)
+        y = target_encoder.fit_transform(df[['bird category']])
         
         # Get unique classes
         unique_classes = df['bird category'].unique()
