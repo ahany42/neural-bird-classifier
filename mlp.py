@@ -1,52 +1,46 @@
 import numpy as np
+import pandas as pd
 import utils
-
-def main(activation_function, bias, neurons_per_hidden_layer, hidden_layers, eta, epochs, mse_threshold):
+from tqdm import tqdm
+def main(activation_function, bias, neurons_per_hidden_layer, hidden_layers, eta, epochs):
     X_train, y_train, X_test, y_test = utils.preprocessing("mlp")
 
-  
-    # Parse the neurons_per_hidden_layer if it is a string of comma-separated values
     if isinstance(neurons_per_hidden_layer, str):
         neurons_per_hidden_layer = list(map(int, neurons_per_hidden_layer.split(',')))
     
-    # Adjust the number of neurons per hidden layer to match the number of hidden layers
     if len(neurons_per_hidden_layer) > hidden_layers:
         neurons_per_hidden_layer = neurons_per_hidden_layer[:hidden_layers]
     elif len(neurons_per_hidden_layer) < hidden_layers:
         neurons_per_hidden_layer += [neurons_per_hidden_layer[-1]] * (hidden_layers - len(neurons_per_hidden_layer))
 
-    weights, biases = train(X_train, y_train, activation_function, bias, neurons_per_hidden_layer, hidden_layers, eta, epochs, mse_threshold)
+    weights, biases = train(X_train, y_train, activation_function, bias, neurons_per_hidden_layer, hidden_layers, eta, epochs)
     
-    # Train and test accuracies
-    train_tanh_confusion_matrix, train_tanh_accuracy_value = train_accuracy(X_train, y_train, weights, biases, bias, 'tanh')
-    test_tanh_confusion_matrix, test_tanh_accuracy_value = test_accuracy(X_test, y_test, weights, biases, bias, 'tanh')
-    train_sigmoid_confusion_matrix, train_sigmoid_accuracy_value = train_accuracy(X_train, y_train, weights, biases, bias, 'sigmoid')
-    test_sigmoid_confusion_matrix, test_sigmoid_accuracy_value = test_accuracy(X_test, y_test, weights, biases, bias, 'sigmoid')
+    train_confusion_matrix, train_accuracy = accuracy(X_train, y_train, weights, biases, bias, activation_function)
+    test_confusion_matrix, test_accuracy = accuracy(X_test, y_test, weights, biases, bias, activation_function)
+    overall_accuracy = (train_accuracy + test_accuracy) / 2
+   
     
-    print("Tanh Training Accuracy: {:.2f}%".format(train_tanh_accuracy_value))
-    print("Tanh Test Accuracy: {:.2f}%".format(test_tanh_accuracy_value))
+    print(f"\nTraining Results with {activation_function}:")
+    print(f"Training Accuracy: {train_accuracy:.2f}%")
+    print("Training Confusion Matrix:")
+    print(train_confusion_matrix)
     
-    print("Sigmoid Training Accuracy: {:.2f}%".format(train_sigmoid_accuracy_value))
-    print("Sigmoid Test Accuracy: {:.2f}%".format(test_sigmoid_accuracy_value))
+    print(f"\nTest Results with {activation_function}:")
+    print(f"Test Accuracy: {test_accuracy:.2f}%")
+    print("Test Confusion Matrix:")
+    print(test_confusion_matrix)
 
-    print("Tanh Train Confusion Matrix:")
-    print(train_tanh_confusion_matrix)
-    print("Sigmoid Train Confusion Matrix:")
-    print(train_sigmoid_confusion_matrix)
-    
-    print("Tanh Test Confusion Matrix:")
-    print(test_tanh_confusion_matrix)
-    print("Sigmoid Test Confusion Matrix:")
-    print(test_sigmoid_confusion_matrix)
 
-def train(X_train, y_train, activation_function, bias, neurons_per_hidden_layer, hidden_layers, eta, epochs, mse_threshold):
-    # Initialize weights and biases
+    return train_confusion_matrix, test_confusion_matrix, train_accuracy, test_accuracy, overall_accuracy
+
+def train(X_train, y_train, activation_function, bias, neurons_per_hidden_layer, hidden_layers, eta, epochs):
     weights = []
     biases = []
 
     input_size = X_train.shape[1]
-    weights.append(np.random.randn(input_size, neurons_per_hidden_layer[0]))
-    biases.append(np.random.randn(1, neurons_per_hidden_layer[0]) if bias else np.zeros((1, neurons_per_hidden_layer[0])))
+    #small random weights and biases
+    weights.append(np.random.randn(input_size, neurons_per_hidden_layer[0]) * 0.01)
+    biases.append(np.random.randn(1, neurons_per_hidden_layer[0]) * 0.01 if bias else np.zeros((1, neurons_per_hidden_layer[0])))
 
     for i in range(hidden_layers - 1):
         weights.append(np.random.randn(neurons_per_hidden_layer[i], neurons_per_hidden_layer[i + 1]))
@@ -56,7 +50,8 @@ def train(X_train, y_train, activation_function, bias, neurons_per_hidden_layer,
     weights.append(np.random.randn(neurons_per_hidden_layer[-1], output_size))
     biases.append(np.random.randn(1, output_size) if bias else np.zeros((1, output_size)))
 
-    for epoch in range(epochs):
+
+    for epoch in tqdm(range(epochs), desc="Training epochs"):
         # Forward pass
         layer_inputs = [X_train]
         layer_outputs = [X_train]
@@ -68,17 +63,7 @@ def train(X_train, y_train, activation_function, bias, neurons_per_hidden_layer,
             output = utils.activation_fn(net, activation_function)
             layer_inputs.append(net)
             layer_outputs.append(output)
-
-        # Ensure dimensions match
-        print("Shape of y_train:", y_train.shape)
-        print("Shape of final output:", layer_outputs[-1].shape)
-
-        # MSE loss calculation
-        mse = np.mean((y_train - layer_outputs[-1]) ** 2)
-        if mse < mse_threshold:
-            break
-
-        # Backpropagation
+        # Back propagation
         error_signals = []
         error = y_train - layer_outputs[-1]
         current_error_signal = error * utils.activation_fn_derivative(layer_outputs[-1], activation_function)
@@ -106,41 +91,32 @@ def predict(X, weights, biases, bias, activation_function):
         layer_outputs.append(output)
     return layer_outputs[-1]
 
-def test_accuracy(X_test, y_test, weights, biases, bias, activation_function):
-    y_pred = predict(X_test, weights, biases, bias, activation_function)
+def accuracy(X, y, weights, biases, bias, activation_function):
+    y_pred = predict(X, weights, biases, bias, activation_function)
     y_pred_classes = np.argmax(y_pred, axis=1)
-    y_test_classes = np.argmax(y_test, axis=1)
+    y_true_classes = np.argmax(y, axis=1)
 
-    num_classes = y_test.shape[1]
+    unique_classes = np.unique(np.concatenate([y_true_classes, y_pred_classes]))
+    num_classes = len(unique_classes)
+    
     confusion_matrix = np.zeros((num_classes, num_classes), dtype=int)
-    for true, pred in zip(y_test_classes, y_pred_classes):
-        confusion_matrix[true, pred] += 1
+    
+    class_to_idx = {cls: idx for idx, cls in enumerate(unique_classes)}
+    idx_to_class = {v: k for k, v in class_to_idx.items()}
+    
+    df = pd.read_csv('birds_data.csv')
+    class_names = df['bird category'].unique()
+    labels = [class_names[idx_to_class[i]] for i in range(num_classes)]
+    
+    for true, pred in zip(y_true_classes, y_pred_classes):
+        true_idx = class_to_idx[true]
+        pred_idx = class_to_idx[pred]
+        confusion_matrix[true_idx, pred_idx] += 1
 
-    accuracy = np.mean(y_pred_classes == y_test_classes) * 100
-    return confusion_matrix, accuracy
+    accuracy_value = np.mean(y_pred_classes == y_true_classes) * 100
 
-def train_accuracy(X_train, y_train, weights, biases, bias, activation_function):
-    print("Confusion Matrix For Train Set using ", activation_function, " activation function")
-    y_pred = predict(X_train, weights, biases, bias, activation_function)
-    y_pred_classes = np.argmax(y_pred, axis=1)
-    y_train_classes = np.argmax(y_train, axis=1)
+    confusion_matrix = pd.DataFrame(confusion_matrix, 
+                                  index=[f'Actual {label} ' for label in labels],
+                                  columns=[f'{label}' for label in labels])
 
-    num_classes = y_train.shape[1]
-    confusion_matrix = np.zeros((num_classes, num_classes), dtype=int)
-    for true, pred in zip(y_train_classes, y_pred_classes):
-        confusion_matrix[true, pred] += 1
-
-    accuracy = np.mean(y_pred_classes == y_train_classes) * 100
-    return confusion_matrix, accuracy
-
-# Example of running the model with 'sigmoid' activation
-activation_function = 'sigmoid'  # Try 'tanh' or 'sigmoid'
-bias = True  # Set to False if no bias is needed
-neurons_per_hidden_layer = '5,10,11,12,8,5,9'  # Comma-separated string
-hidden_layers = 3  # Adjust as needed
-eta = 0.1  # Learning rate
-epochs = 1000  # Number of epochs for training
-mse_threshold = 0.01  # Mean squared error threshold for stopping criterion
-
-# Run the main function
-main(activation_function, bias, neurons_per_hidden_layer, hidden_layers, eta, epochs, mse_threshold)
+    return confusion_matrix, accuracy_value

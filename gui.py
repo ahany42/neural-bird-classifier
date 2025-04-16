@@ -27,15 +27,15 @@ def toggle_mse_entry():
         tanh_radio.grid_forget()
         bias_checkbox.grid(row=7, column=0, sticky='w', pady=(5, 0))
     elif algo_var.get() == "mlp":
-        mse_label.grid(row=9, column=0, sticky='w', pady=(5, 0))
-        mse_entry.grid(row=9, column=1, pady=(5, 10))
-        hidden_layers_label.grid(row=10, column=0, sticky='w', pady=(5, 0))
-        hidden_layer_entry.grid(row=10, column=1, pady=(5, 10))
-        neurons_label.grid(row=11, column=0, sticky='w', pady=(5, 0))
-        neurons_entry.grid(row=11, column=1, pady=(5, 10))
-        activation_label.grid(row=12, column=0, sticky='w', pady=(5, 0))
-        sigmoid_radio.grid(row=12, column=1, sticky='w', pady=(5, 0))
-        tanh_radio.grid(row=12, column=2, sticky='w', pady=(5, 0))
+        mse_label.grid_forget()
+        mse_entry.grid_forget()
+        hidden_layers_label.grid(row=9, column=0, sticky='w', pady=(5, 0))
+        hidden_layer_entry.grid(row=9, column=1, pady=(5, 10))
+        neurons_label.grid(row=10, column=0, sticky='w', pady=(5, 0))
+        neurons_entry.grid(row=10, column=1, pady=(5, 10))
+        activation_label.grid(row=11, column=0, sticky='w', pady=(5, 0))
+        sigmoid_radio.grid(row=11, column=1, sticky='w', pady=(5, 0))
+        tanh_radio.grid(row=11, column=2, sticky='w', pady=(5, 0))
         bias_checkbox.grid(row=7, column=0, sticky='w', pady=(5, 0))
     else:
         mse_label.grid_forget()
@@ -68,7 +68,7 @@ def train_model():
         feature1, feature2 = feature1_var.get(), feature2_var.get()
         class1, class2 = class1_var.get(), class2_var.get()
         eta_text, epochs_text = eta_entry.get().strip(), epochs_entry.get().strip()
-        mse_text = mse_entry.get().strip() if algo_var.get() == "Adaline" or algo_var.get() == "mlp" else "N/A"
+        mse_text = mse_entry.get().strip() if algo_var.get() == "Adaline" else "N/A"
         bias = bias_var.get()  
         algorithm = algo_var.get()
 
@@ -89,7 +89,7 @@ def train_model():
         try:
             eta = float(eta_text)
             epochs = int(epochs_text)
-            mse_threshold = float(mse_text) if algo_var.get() == "Adaline" or algo_var.get() == "mlp" else "N/A"
+            mse_threshold = float(mse_text) if algo_var.get() == "Adaline" else 0.01  # Default value for MLP
             hidden_layers = int(hidden_layer_entry.get()) if algo_var.get() == "mlp" else "N/A"
             neurons_per_layer = neurons_entry.get() if algo_var.get() == "mlp" else "N/A"
         except ValueError:
@@ -98,7 +98,7 @@ def train_model():
             elif algorithm == "Adaline":
                 messagebox.showerror("Input Error", "Ensure Learning Rate, Epochs, and MSE Threshold are valid numbers.")
             elif algorithm == "mlp":
-                messagebox.showerror("Input Error", "Ensure Learning Rate, Epochs, Number of neurons and Hidden Layers are valid numbers.")
+                messagebox.showerror("Input Error", "Ensure Learning Rate, Epochs, and Hidden Layers are valid numbers.")
             return
 
         if algorithm == "slp":
@@ -125,13 +125,18 @@ def train_model():
             """
         elif algorithm == "mlp":
             activation_function = activation_var.get()
-            confusion_matrix, accuracy = mlp.main(eta, epochs, bias, neurons_per_layer, hidden_layers, activation_function, mse_threshold)
-            classes = df['bird category'].unique()
+            train_confusion_matrix, test_confusion_matrix, train_accuracy, test_accuracy,overall_accuracy = mlp.main(activation_function, bias, neurons_per_layer, hidden_layers, eta, epochs)
             result_text = f"""
-            Confusion Matrix:
-            {format_confusion_matrix(confusion_matrix, classes)}
-
-            Overall Accuracy: {accuracy:.2f} %
+                Training Results with {activation_function}:
+                Training Accuracy: {train_accuracy:.2f}%
+                Training Confusion Matrix: \n
+                {train_confusion_matrix}
+                
+                Test Results with {activation_function}:
+                Test Accuracy: {test_accuracy:.2f}%
+                Test Confusion Matrix:\n
+                {test_confusion_matrix}
+                Overall Accuracy: {overall_accuracy:.2f}%
             """
 
         result_label.config(text=result_text)
