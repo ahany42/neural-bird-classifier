@@ -95,7 +95,7 @@ def preprocessing(algorithm, feature1=None, feature2=None, class1=None, class2=N
             shuffled_indices = np.random.permutation(class_indices)
             
             train_indices = shuffled_indices[:30]
-            test_indices = shuffled_indices[30:50]  # Take next 20 samples
+            test_indices = shuffled_indices[30:50] 
             
             X_train_list.append(X[train_indices])
             X_test_list.append(X[test_indices])
