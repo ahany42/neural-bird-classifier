@@ -90,7 +90,7 @@ pip install numpy pandas matplotlib seaborn
 | ---------- | ----------------- |
 | Perceptron |    up to 100%     |
 | ADALINE    |    up to 100%     |
-| MLP        |                   |
+| MLP        |    up to 100%     |
 
 ### Best Features for ADALINE
 
