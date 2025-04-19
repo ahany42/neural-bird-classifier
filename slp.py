@@ -1,6 +1,5 @@
 import utils
 import numpy as np
-
 def main(feature1, feature2, class1, class2, eta, epochs, bias):
     print("Single Layer Perceptron Training")
     print(feature1, feature2, class1, class2, eta, epochs, bias, sep="  ")
